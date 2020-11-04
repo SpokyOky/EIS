@@ -8,6 +8,8 @@ namespace EIS
 {
     static class Program
     {
+        public static string dbPath = "E:/SQLiteStudio/mydb.db";
+
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>

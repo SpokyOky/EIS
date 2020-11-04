@@ -19,7 +19,22 @@ namespace EIS
 
         private void планСчетовToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ChartOfAccounts().Show();
+            new FormChartOfAccounts().Show();
+        }
+
+        private void сотрудникиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FormEmployee().Show();
+        }
+
+        private void поставщикиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FormSupplier().Show();
+        }
+
+        private void товарToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FormProduct().Show();
         }
     }
 }

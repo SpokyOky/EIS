@@ -12,16 +12,16 @@ using System.Windows.Forms;
 
 namespace EIS
 {
-    public partial class ChartOfAccounts : Form
+    public partial class FormChartOfAccounts : Form
     {
         private SQLiteConnection sql_con;
         private SQLiteCommand sql_cmd;
         private DataSet DS = new DataSet();
         private DataTable DT = new DataTable();
         private string sPath = Path.Combine(
-            Application.StartupPath, "E:/SQLiteStudio/mydb.db");
+            Application.StartupPath, Program.dbPath);
 
-        public ChartOfAccounts()
+        public FormChartOfAccounts()
         {
             InitializeComponent();
         }

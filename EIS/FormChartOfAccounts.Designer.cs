@@ -1,6 +1,6 @@
 ﻿namespace EIS
 {
-    partial class ChartOfAccounts
+    partial class FormChartOfAccounts
     {
         /// <summary>
         /// Required designer variable.
@@ -34,9 +34,12 @@
             // 
             // dataGridView
             // 
+            this.dataGridView.AllowUserToAddRows = false;
+            this.dataGridView.AllowUserToDeleteRows = false;
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Location = new System.Drawing.Point(13, 13);
             this.dataGridView.Name = "dataGridView";
+            this.dataGridView.ReadOnly = true;
             this.dataGridView.Size = new System.Drawing.Size(775, 425);
             this.dataGridView.TabIndex = 0;
             // 

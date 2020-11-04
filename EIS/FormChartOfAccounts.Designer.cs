@@ -43,14 +43,14 @@
             this.dataGridView.Size = new System.Drawing.Size(775, 425);
             this.dataGridView.TabIndex = 0;
             // 
-            // ChartOfAccounts
+            // FormChartOfAccounts
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.dataGridView);
-            this.Name = "ChartOfAccounts";
-            this.Text = "ChartOfAccounts";
+            this.Name = "FormChartOfAccounts";
+            this.Text = "План счетов";
             this.Load += new System.EventHandler(this.chartOfAccounts_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);

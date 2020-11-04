@@ -151,7 +151,7 @@
             this.Controls.Add(this.bindingNavigator2);
             this.Controls.Add(this.dataGridView);
             this.Name = "FormProduct";
-            this.Text = "Поставщики";
+            this.Text = "Товары";
             this.Load += new System.EventHandler(this.FormProduct_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingNavigator2)).EndInit();

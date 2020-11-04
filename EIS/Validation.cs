@@ -17,6 +17,7 @@ namespace EIS
         public static string NameStandart = "Abc";
         public static string PhoneStandart = "89998887766";
         public static string EmailStandart = "gaben@newell.com";
+        public static string NumberStandart = "000";
         public static string PriceStandart = "00.00";
         public static string DateStandart = "16/05/2001";
 
@@ -40,6 +41,11 @@ namespace EIS
             return Regex.IsMatch(Email, @"^[a-zA-Z]+[@]{1}[a-zA-Z]+[.]{1}[a-zA-Z]+$");
         }
 
+        public static bool isNumber(string Number)
+        {
+            return Regex.IsMatch(Number, @"^[0-9]{1,20}$");
+        }
+
         public static bool isPrice(string Price)
         {
             return Regex.IsMatch(Price, @"^[0-9]{1,13}[.]{1}[0-9]{1,2}$");
@@ -47,7 +53,7 @@ namespace EIS
 
         public static bool isDate(string Date)
         {
-            return Regex.IsMatch(Date, @"[0-9]{1,2}[/]{1}[0-9]{1,2}[/]{1}[0-9]{2,4}$");
+            return Regex.IsMatch(Date, @"^[0-9]{1,2}[/]{1}[0-9]{1,2}[/]{1}[0-9]{2,4}$");
             //return DateTime.TryParseExact(Date, "dd/M/yyyy", _ci, DateTimeStyles.None, out _dt);
         }
     }

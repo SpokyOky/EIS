@@ -123,8 +123,8 @@ namespace EIS
         private void dataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
-            string FioId = dataGridView[1, CurrentRow].Value.ToString();
-            toolStripTextBoxName.Text = FioId;
+            string NameId = dataGridView[1, CurrentRow].Value.ToString();
+            toolStripTextBoxName.Text = NameId;
             string PhoneId = dataGridView[2, CurrentRow].Value.ToString();
             toolStripTextBoxPhone.Text = PhoneId;
         }

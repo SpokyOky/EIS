@@ -95,6 +95,7 @@
             this.серииToolStripMenuItem.Name = "серииToolStripMenuItem";
             this.серииToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.серииToolStripMenuItem.Text = "Серии";
+            this.серииToolStripMenuItem.Click += new System.EventHandler(this.серииToolStripMenuItem_Click);
             // 
             // планСчетовToolStripMenuItem
             // 

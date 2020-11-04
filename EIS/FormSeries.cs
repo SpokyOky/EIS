@@ -18,9 +18,18 @@ namespace EIS
         private SQLiteCommand sql_cmd;
         private DataSet DS = new DataSet();
         private DataTable DT = new DataTable();
-        private string sPath = Program.dbPath;
-        private int minLenght = 2;
-        private int maxLenght = 50;
+        private static string sPath = Program.dbPath;
+
+        private string prevNumber = Validation.NumberStandart;
+        private string prevPrice = Validation.PriceStandart;
+        private string prevLimitDate = Validation.DateStandart;
+
+        private string standartSelectCommand = "Select Ser.ID, Ser.Number, Ser.Price, Ser.LimitDate, Sup.Name AS Supplier, P.Name AS Product " +
+                "from Series Ser " +
+                "Join Supplier Sup On Ser.SupplierID = Sup.ID " +
+                "Join Product P On Ser.ProductID = P.ID";
+        private string standartConnectionString = @"Data Source=" + sPath + ";New=False;Version=3";
+
         public FormSeries()
         {
             InitializeComponent();
@@ -28,17 +37,20 @@ namespace EIS
 
         private void FormSeries_Load(object sender, EventArgs e)
         {
-            string ConnectionString = @"Data Source=" + sPath +
-";New=False;Version=3";
-            String selectCommand = "Select ID,FIO,PersonalInfo,Salary, NameSubdivision AS Subdivision  from Employees Join Subdivision On Subdivision.idSubdivision=Employees.Subdivision";
-            selectTable(ConnectionString, selectCommand);
-            String selectSubd = "SELECT idSubdivision, NameSubdivision FROM Subdivision";
-            selectCombo(ConnectionString, selectSubd, toolStripComboBox1, "NameSubdivision",
-"idSubdivision");
-            toolStripComboBox1.SelectedIndex = -1;
+            selectTable(standartConnectionString, standartSelectCommand);
+            string selectSupplier = "SELECT ID, Name FROM Supplier";
+            selectCombo(standartConnectionString, selectSupplier, toolStripComboBoxSupplier, "Name", "ID");
+            toolStripComboBoxSupplier.SelectedIndex = -1;
+            string selectProduct = "SELECT ID, Name FROM Product";
+            selectCombo(standartConnectionString, selectProduct, toolStripComboBoxProduct, "Name", "ID");
+            toolStripComboBoxProduct.SelectedIndex = -1;
+
+            toolStripTextBoxNumber.Text = prevNumber;
+            toolStripTextBoxPrice.Text = prevPrice;
+            toolStripTextBoxLimitDate.Text = prevLimitDate;
         }
-        //метод для отображения подразделений в комбобоксе
-        public void selectCombo(string ConnectionString, String selectCommand,
+
+        public void selectCombo(string ConnectionString, string selectCommand,
 ToolStripComboBox comboBox, string displayMember, string valueMember)
         {
             SQLiteConnection connect = new
@@ -53,62 +65,27 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             comboBox.ComboBox.ValueMember = valueMember;
             connect.Close();
         }
+
         private void bindingNavigatorAddNewItem_Click(object sender, EventArgs e)
         {
-            if (!(toolStripTextBox1.Text.Length > minLenght && toolStripTextBox1.Text.Length < maxLenght))
+            if (toolStripComboBoxSupplier.Text == "")
             {
-                MessageBox.Show("Поле ФИО должно содержать не менее 3 и не более 50 символов");
+                MessageBox.Show("Выберите поставщика");
                 return;
             }
-            if (!(toolStripTextBox2.Text.Length > minLenght && toolStripTextBox2.Text.Length < maxLenght))
+            if (toolStripComboBoxProduct.Text == "")
             {
-                MessageBox.Show("Поле Личные данные должно содержать не менее 3 и не более 50 символов");
+                MessageBox.Show("Выберите товар");
                 return;
             }
-            if (toolStripComboBox1.Text == "")
-            {
-                MessageBox.Show("Выберите подразделение");
-                return;
-            }
-            //вставка в таблицу Employees           
-            if (toolStripTextBox3.Text.IndexOf('.') > 0)
-            {
-                if (toolStripTextBox3.Text.Substring(toolStripTextBox3.Text.IndexOf('.')).Length > 3)
-                {
-                    MessageBox.Show("Зарплата должна быть не более 15 символов и иметь не более 2-ух знаков после запятой");
-                    return;
-                }
-            }
-            toolStripTextBox3.Text = toolStripTextBox3.Text.Replace(",", ".");
-            string ConnectionString = @"Data Source=" + sPath +
-";New=False;Version=3";
-            String selectCommand = "select MAX(ID) from Employees";
-            object maxValue = selectValue(ConnectionString, selectCommand);
-            if (Convert.ToString(maxValue) == "")
-                maxValue = 0;
-            string txtSQLQuery = "insert into Employees (ID,FIO, PersonalInfo, Salary, Subdivision) values (" +
-       (Convert.ToInt32(maxValue) + 1) + ", '" + toolStripTextBox1.Text + "', '" + toolStripTextBox2.Text + "','" + toolStripTextBox3.Text + "','" + toolStripComboBox1.ComboBox.SelectedValue + "')";
+
+            string txtSQLQuery = "insert into Series (Number, Price, LimitDate, SupplierID, ProductID) values ('" +
+       toolStripTextBoxNumber.Text + "', '" + toolStripTextBoxPrice.Text + "','" + toolStripTextBoxLimitDate.Text + "','" + 
+       toolStripComboBoxSupplier.ComboBox.SelectedValue + "','" + toolStripComboBoxProduct.ComboBox.SelectedValue + "')";
             ExecuteQuery(txtSQLQuery);
-            //обновление dataGridView1
-            selectCommand = "Select ID,FIO,PersonalInfo,Salary, NameSubdivision AS Subdivision  from Employees Join Subdivision On Subdivision.idSubdivision=Employees.Subdivision";
-            refreshForm(ConnectionString, selectCommand);
+            refreshForm(standartConnectionString, standartSelectCommand);
         }
-        public object selectValue(string ConnectionString, String selectCommand)
-        {
-            SQLiteConnection connect = new
-           SQLiteConnection(ConnectionString);
-            connect.Open();
-            SQLiteCommand command = new SQLiteCommand(selectCommand,
-    connect);
-            SQLiteDataReader reader = command.ExecuteReader();
-            object value = "";
-            while (reader.Read())
-            {
-                value = reader[0];
-            }
-            connect.Close();
-            return value;
-        }
+
         private void ExecuteQuery(string txtQuery)
         {
             sql_con = new SQLiteConnection("Data Source=" + sPath +
@@ -119,17 +96,20 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             sql_cmd.ExecuteNonQuery();
             sql_con.Close();
         }
-        public void refreshForm(string ConnectionString, String selectCommand)
+
+        public void refreshForm(string ConnectionString, string selectCommand)
         {
             selectTable(ConnectionString, selectCommand);
-            dataGridView1.Update();
-            dataGridView1.Refresh();
-            toolStripTextBox1.Text = "";
-            toolStripTextBox2.Text = "";
-            toolStripTextBox3.Text = "";
-            toolStripComboBox1.SelectedIndex = -1;
+            dataGridView.Update();
+            dataGridView.Refresh();
+            toolStripTextBoxNumber.Text = prevNumber = Validation.NumberStandart;
+            toolStripTextBoxPrice.Text = prevPrice = Validation.PriceStandart;
+            toolStripTextBoxLimitDate.Text = prevLimitDate = Validation.DateStandart;
+            toolStripComboBoxSupplier.SelectedIndex = -1;
+            toolStripComboBoxProduct.SelectedIndex = -1;
         }
-        public void selectTable(string ConnectionString, String selectCommand)
+
+        public void selectTable(string ConnectionString, string selectCommand)
         {
             SQLiteConnection connect = new
            SQLiteConnection(ConnectionString);
@@ -138,26 +118,21 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
            SQLiteDataAdapter(selectCommand, connect);
             DataSet ds = new DataSet();
             dataAdapter.Fill(ds);
-            dataGridView1.DataSource = ds;
-            dataGridView1.DataMember = ds.Tables[0].ToString();
+            dataGridView.DataSource = ds;
+            dataGridView.DataMember = ds.Tables[0].ToString();
             connect.Close();
         }
+
         private void toolStripButtonDelete_Click(object sender, EventArgs e)
         {
-            //выбрана строка CurrentRow
-            int CurrentRow = dataGridView1.SelectedCells[0].RowIndex;
-            //получить значение ID выбранной строки
-            string valueId = dataGridView1[0, CurrentRow].Value.ToString();
-            String selectCommand = "delete from Employees where ID=" + valueId;
-            string ConnectionString = @"Data Source=" + sPath +
-           ";New=False;Version=3";
-            changeValue(ConnectionString, selectCommand);
-            //обновление dataGridView1
-            selectCommand = "Select ID,FIO,PersonalInfo,Salary, NameSubdivision AS Subdivision  from Employees Join Subdivision On Subdivision.idSubdivision=Employees.Subdivision";
-            refreshForm(ConnectionString, selectCommand);
-            toolStripTextBox1.Text = "";
+            int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
+            string valueId = dataGridView[0, CurrentRow].Value.ToString();
+            string selectCommand = "delete from Series where ID=" + valueId;
+            changeValue(standartConnectionString, selectCommand);
+            refreshForm(standartConnectionString, standartSelectCommand);
         }
-        public void changeValue(string ConnectionString, String selectCommand)
+
+        public void changeValue(string ConnectionString, string selectCommand)
         {
             SQLiteConnection connect = new
            SQLiteConnection(ConnectionString);
@@ -171,85 +146,89 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             trans.Commit();
             connect.Close();
         }
+
         private void toolStripButtonEdit_Click(object sender, EventArgs e)
         {
-            if (!(toolStripTextBox1.Text.Length > minLenght && toolStripTextBox1.Text.Length < maxLenght))
-            {
-                MessageBox.Show("Поле ФИО должно содержать не менее 3 и не более 50 символов");
-                return;
-            }
-            if (!(toolStripTextBox2.Text.Length > minLenght && toolStripTextBox2.Text.Length < maxLenght))
-            {
-                MessageBox.Show("Поле Личные данные должно содержать не менее 3 и не более 50 символов");
-                return;
-            }
-            if (toolStripComboBox1.Text == "")
+            if (toolStripComboBoxSupplier.Text == "")
             {
                 MessageBox.Show("Выберите подразделение");
                 return;
             }
-            //вставка в таблицу Employees           
-            if (toolStripTextBox3.Text.IndexOf('.') > 0)
+            if (toolStripComboBoxProduct.Text == "")
             {
-                if (toolStripTextBox3.Text.Substring(toolStripTextBox3.Text.IndexOf('.')).Length > 3)
-                {
-                    MessageBox.Show("Зарплата должна быть не более 15 символов и иметь не более 2-ух знаков после запятой");
-                    return;
-                }
+                MessageBox.Show("Выберите товар");
+                return;
             }
-            toolStripTextBox3.Text = toolStripTextBox3.Text.Replace(",", ".");
-            //выбрана строка CurrentRow
-            int CurrentRow = dataGridView1.SelectedCells[0].RowIndex;
-            //получить значение FIO выбранной строки
-            string valueId = dataGridView1[0, CurrentRow].Value.ToString();
-            string changeFIO = toolStripTextBox1.Text;
-            //обновление Name
-            String selectCommand = "update Employees set FIO='" + changeFIO + "' where ID = " + valueId;
-            string ConnectionString = @"Data Source=" + sPath +
-       ";New=False;Version=3";
-            changeValue(ConnectionString, selectCommand);
-            string changePersonalInfo = toolStripTextBox2.Text;
-            selectCommand = "update Employees set PersonalInfo='" + changePersonalInfo + "' where ID = " + valueId;
-            changeValue(ConnectionString, selectCommand);
-            string changeSalary = toolStripTextBox3.Text;
-            selectCommand = "update Employees set Salary='" + changeSalary + "' where ID = " + valueId;
-            changeValue(ConnectionString, selectCommand);
-            string changeSubdivision = toolStripComboBox1.ComboBox.SelectedValue.ToString();
-            selectCommand = "update Employees set Subdivision='" + changeSubdivision + "' where ID = " + valueId;
-            changeValue(ConnectionString, selectCommand);
-            //обновление dataGridView1
-            selectCommand = "Select ID,FIO,PersonalInfo,Salary, NameSubdivision AS Subdivision  from Employees Join Subdivision On Subdivision.idSubdivision=Employees.Subdivision";
-            refreshForm(ConnectionString, selectCommand);
+            int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
+            string valueId = dataGridView[0, CurrentRow].Value.ToString();
+            string changeNumber = toolStripTextBoxNumber.Text;
+            string selectCommand = "update Series set Number='" + changeNumber + "' where ID = " + valueId;
+            changeValue(standartConnectionString, selectCommand);
+            string changePrice = toolStripTextBoxPrice.Text;
+            selectCommand = "update Series set Price='" + changePrice + "' where ID = " + valueId;
+            changeValue(standartConnectionString, selectCommand);
+            string changeLimitDate = toolStripTextBoxLimitDate.Text;
+            selectCommand = "update Series set LimitDate='" + changeLimitDate + "' where ID = " + valueId;
+            changeValue(standartConnectionString, selectCommand);
+            string changeSupplier = toolStripComboBoxSupplier.ComboBox.SelectedValue.ToString();
+            selectCommand = "update Series set SupplierID='" + changeSupplier + "' where ID = " + valueId;
+            changeValue(standartConnectionString, selectCommand);
+            string changeProduct = toolStripComboBoxProduct.ComboBox.SelectedValue.ToString();
+            selectCommand = "update Series set ProductID='" + changeProduct + "' where ID = " + valueId;
+            changeValue(standartConnectionString, selectCommand);
 
+            refreshForm(standartConnectionString, standartSelectCommand);
         }
-        private void dataGridView1_CellMouseClick(object sender,
+
+        private void dataGridView_CellMouseClick(object sender,
     DataGridViewCellMouseEventArgs e)
         {
-            //выбрана строка CurrentRow
-            int CurrentRow = dataGridView1.SelectedCells[0].RowIndex;
-            //получение значения
-            string FIOId = dataGridView1[1, CurrentRow].Value.ToString();
-            toolStripTextBox1.Text = FIOId;
-            string PersonalInfoId = dataGridView1[2, CurrentRow].Value.ToString();
-            toolStripTextBox2.Text = PersonalInfoId;
-            string SalaryId = dataGridView1[3, CurrentRow].Value.ToString();
-            toolStripTextBox3.Text = SalaryId;
-            string SubdivisionId = dataGridView1[4, CurrentRow].Value.ToString();
-            toolStripComboBox1.Text = SubdivisionId;
+            int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
+            string NumberId = dataGridView[1, CurrentRow].Value.ToString();
+            toolStripTextBoxNumber.Text = NumberId;
+            string PriceId = dataGridView[2, CurrentRow].Value.ToString().Replace(',','.');
+            toolStripTextBoxPrice.Text = PriceId;
+            string LimitDateId = dataGridView[3, CurrentRow].Value.ToString();
+            toolStripTextBoxLimitDate.Text = LimitDateId;
+            string SupplierId = dataGridView[4, CurrentRow].Value.ToString();
+            toolStripComboBoxSupplier.Text = SupplierId;
+            string ProductId = dataGridView[5, CurrentRow].Value.ToString();
+            toolStripComboBoxProduct.Text = ProductId;
         }
-        private void toolStripTextBox3_KeyPress(object sender, KeyPressEventArgs e)
+
+        private void toolStripTextBoxNumber_TextChanged(object sender, EventArgs e)
         {
-            char l = e.KeyChar;
-            if ((l < '0' || l > '9') && l != '\b')
+            if (!Validation.isNumber(toolStripTextBoxNumber.Text))
             {
-                if (toolStripTextBox3.SelectionStart == 0)
-                {
-                    if (l == '.') e.Handled = true;
-                }
-                if (l != '.' || toolStripTextBox3.Text.IndexOf(".") != -1)
-                {
-                    e.Handled = true;
-                }
+                toolStripTextBoxNumber.Text = prevNumber;
+            }
+            else
+            {
+                prevNumber = toolStripTextBoxNumber.Text;
+            }
+        }
+
+        private void toolStripTextBoxPrice_TextChanged(object sender, EventArgs e)
+        {
+            if (!Validation.isPrice(toolStripTextBoxPrice.Text))
+            {
+                toolStripTextBoxPrice.Text = prevPrice;
+            }
+            else
+            {
+                prevPrice= toolStripTextBoxPrice.Text;
+            }
+        }
+
+        private void toolStripTextBoxLimitDate_TextChanged(object sender, EventArgs e)
+        {
+            if (!Validation.isDate(toolStripTextBoxLimitDate.Text))
+            {
+                toolStripTextBoxLimitDate.Text = prevLimitDate;
+            }
+            else
+            {
+                prevLimitDate = toolStripTextBoxLimitDate.Text;
             }
         }
     }

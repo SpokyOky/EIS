@@ -117,8 +117,8 @@ namespace EIS
         private void dataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
-            string FIOId = dataGridView[1, CurrentRow].Value.ToString();
-            toolStripTextBoxName.Text = FIOId;
+            string NameId = dataGridView[1, CurrentRow].Value.ToString();
+            toolStripTextBoxName.Text = NameId;
         }
 
         private void toolStripTextBoxName_TextChanged(object sender, EventArgs e)

@@ -36,5 +36,10 @@ namespace EIS
         {
             new FormProduct().Show();
         }
+
+        private void серииToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FormSeries().Show();
+        }
     }
 }

@@ -122,8 +122,9 @@
             // журналОперацийToolStripMenuItem
             // 
             this.журналОперацийToolStripMenuItem.Name = "журналОперацийToolStripMenuItem";
-            this.журналОперацийToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.журналОперацийToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.журналОперацийToolStripMenuItem.Text = "Журнал операций";
+            this.журналОперацийToolStripMenuItem.Click += new System.EventHandler(this.журналОперацийToolStripMenuItem_Click);
             // 
             // отчётToolStripMenuItem
             // 

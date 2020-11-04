@@ -41,5 +41,10 @@ namespace EIS
         {
             new FormSeries().Show();
         }
+
+        private void журналОперацийToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FormJournalOperation().Show();
+        }
     }
 }

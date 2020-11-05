@@ -47,7 +47,7 @@ namespace EIS
             toolStripComboBoxEmployee.SelectedIndex = -1;
 
             toolStripTextBoxType.Text = prevType;
-            toolStripTextBoxDate.Text = prevDate;
+            dateTimePicker.Value = Validation.StD(prevDate);
             toolStripTextBoxDescription.Text = prevDesc;
             toolStripTextBoxCount.Text = prevCount;            
         }
@@ -82,7 +82,7 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             }
 
             string txtSQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID, EmployeeID) values ('" +
-       toolStripTextBoxDate.Text + "', '" + toolStripTextBoxType.Text + "','" + toolStripTextBoxDescription.Text + "','" +
+       Validation.DtS(dateTimePicker.Value) + "', '" + toolStripTextBoxType.Text + "','" + toolStripTextBoxDescription.Text + "','" +
        toolStripTextBoxCount.Text + "','" + toolStripComboBoxSeries.ComboBox.SelectedValue + "','" + toolStripComboBoxEmployee.ComboBox.SelectedValue + "')";
             ExecuteQuery(txtSQLQuery);
             refreshForm(standartConnectionString, standartSelectCommand);
@@ -104,7 +104,8 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             selectTable(ConnectionString, selectCommand);
             dataGridView.Update();
             dataGridView.Refresh();
-            toolStripTextBoxDate.Text = prevDate = Validation.DateStandart;
+            dateTimePicker.Value = Validation.StD(Validation.DateStandart);
+            prevDate = Validation.DateStandart;
             toolStripTextBoxType.Text = prevType = Validation.NameStandart;
             toolStripTextBoxDescription.Text = prevDesc = Validation.TextStandart;
             toolStripTextBoxCount.Text = prevCount = Validation.NumberStandart;
@@ -171,10 +172,10 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             string changeType = toolStripTextBoxType.Text;
             selectCommand = "update JournalOperation set Type='" + changeType + "' where ID = " + valueId;
             changeValue(standartConnectionString, selectCommand);
-            string changeDescription = toolStripTextBoxDate.Text;
+            string changeDescription = toolStripTextBoxDescription.Text;
             selectCommand = "update JournalOperation set Description='" + changeDescription + "' where ID = " + valueId;
             changeValue(standartConnectionString, selectCommand);
-            string changeCount = toolStripTextBoxDate.Text;
+            string changeCount = Validation.DtS(dateTimePicker.Value);
             selectCommand = "update JournalOperation set Count='" + changeCount + "' where ID = " + valueId;
             changeValue(standartConnectionString, selectCommand);
             string changeSeries = toolStripComboBoxSeries.ComboBox.SelectedValue.ToString();
@@ -192,7 +193,7 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
         {
             int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
             string DateId = dataGridView[1, CurrentRow].Value.ToString();
-            toolStripTextBoxDate.Text = DateId;
+            dateTimePicker.Value = Validation.StD(DateId);
             string TypeId = dataGridView[2, CurrentRow].Value.ToString().Replace(',','.');
             toolStripTextBoxType.Text = TypeId;
             string DescriptionId = dataGridView[3, CurrentRow].Value.ToString();

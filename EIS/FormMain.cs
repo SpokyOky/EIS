@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -12,9 +13,36 @@ namespace EIS
 {
     public partial class FormMain : Form
     {
+        private SQLiteConnection sql_con;
+        private SQLiteCommand sql_cmd;
+        private DataSet DS = new DataSet();
+        private DataTable DT = new DataTable();
+        private static string sPath = Program.dbPath;
+
+        private string standartSelectCommand = "Select JO.ID, JO.Date, JO.Type, JO.Description, JO.Count, S.Number AS Series, E.Name AS Employee " +
+               "from JournalOperation JO " +
+               "Join Series S On JO.SeriesID = S.ID " +
+               "Join Employee E On JO.EmployeeID = E.ID";
+        private string standartConnectionString = @"Data Source=" + sPath + ";New=False;Version=3";
+
         public FormMain()
         {
             InitializeComponent();
+            selectTable(standartConnectionString, standartSelectCommand);
+        }
+
+        public void selectTable(string ConnectionString, string selectCommand)
+        {
+            SQLiteConnection connect = new
+           SQLiteConnection(ConnectionString);
+            connect.Open();
+            SQLiteDataAdapter dataAdapter = new
+           SQLiteDataAdapter(selectCommand, connect);
+            DataSet ds = new DataSet();
+            dataAdapter.Fill(ds);
+            dataGridView.DataSource = ds;
+            dataGridView.DataMember = ds.Tables[0].ToString();
+            connect.Close();
         }
 
         private void планСчетовToolStripMenuItem_Click(object sender, EventArgs e)
@@ -42,9 +70,24 @@ namespace EIS
             new FormSeries().Show();
         }
 
-        private void журналОперацийToolStripMenuItem_Click(object sender, EventArgs e)
+        private void журналПроводокToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new FormJournalOperation().Show();
+            
+        }
+
+        private void поступлениеТоваровToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void продажаТоваровToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void списаниеТоваровToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

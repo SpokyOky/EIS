@@ -111,7 +111,7 @@
 			// 
 			this.toolStripTextBoxType.Font = new System.Drawing.Font("Segoe UI", 9F);
 			this.toolStripTextBoxType.Name = "toolStripTextBoxType";
-			this.toolStripTextBoxType.Size = new System.Drawing.Size(80, 25);
+			this.toolStripTextBoxType.Size = new System.Drawing.Size(100, 25);
 			this.toolStripTextBoxType.TextChanged += new System.EventHandler(this.toolStripTextBoxType_TextChanged);
 			// 
 			// toolStripLabel9

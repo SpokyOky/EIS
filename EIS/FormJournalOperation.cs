@@ -205,18 +205,6 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             toolStripComboBoxEmployee.Text = EmployeeId;
         }
 
-        private void toolStripTextBoxDate_TextChanged(object sender, EventArgs e)
-        {
-            if (Validation.isDate(toolStripTextBoxDate.Text))
-            {
-                prevDate = toolStripTextBoxDate.Text;
-            }
-            else
-            {
-                toolStripTextBoxDate.Text = prevDate;
-            }
-        }
-
         private void toolStripTextBoxType_TextChanged(object sender, EventArgs e)
         {
             if (Validation.isName(toolStripTextBoxType.Text))

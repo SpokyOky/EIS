@@ -19,8 +19,18 @@ namespace EIS
         public static string EmailStandart = "gaben@newell.com";
         public static string NumberStandart = "000";
         public static string PriceStandart = "00.00";
-        public static string DateStandart = "16/05/2001";
+        public static string DateStandart = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         public static string TextStandart = "Ab123_";
+
+        public static string DtS(DateTime dt)
+        {
+            return dt.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        }
+
+        public static DateTime StD(string str)
+        {
+            return DateTime.Parse(str);
+        }
 
         public static bool isFio(string Fio)
         {
@@ -50,12 +60,6 @@ namespace EIS
         public static bool isPrice(string Price)
         {
             return Regex.IsMatch(Price, @"^[0-9]{1,13}[.]{1}[0-9]{1,2}$");
-        }
-
-        public static bool isDate(string Date)
-        {
-            return Regex.IsMatch(Date, @"^[0-9]{1,2}[/]{1}[0-9]{1,2}[/]{1}[0-9]{2,4}$");
-            //return DateTime.TryParseExact(Date, "dd/M/yyyy", _ci, DateTimeStyles.None, out _dt);
         }
 
         public static bool isText(string Text, int length)

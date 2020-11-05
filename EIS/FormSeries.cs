@@ -47,7 +47,7 @@ namespace EIS
 
             toolStripTextBoxNumber.Text = prevNumber;
             toolStripTextBoxPrice.Text = prevPrice;
-            toolStripTextBoxLimitDate.Text = prevLimitDate;
+            dateTimePicker.Value = DateTime.Parse(prevLimitDate);
         }
 
         public void selectCombo(string ConnectionString, string selectCommand,
@@ -80,7 +80,7 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             }
 
             string txtSQLQuery = "insert into Series (Number, Price, LimitDate, SupplierID, ProductID) values ('" +
-       toolStripTextBoxNumber.Text + "', '" + toolStripTextBoxPrice.Text + "','" + toolStripTextBoxLimitDate.Text + "','" + 
+       toolStripTextBoxNumber.Text + "', '" + toolStripTextBoxPrice.Text + "','" + Validation.DtS(dateTimePicker.Value) + "','" + 
        toolStripComboBoxSupplier.ComboBox.SelectedValue + "','" + toolStripComboBoxProduct.ComboBox.SelectedValue + "')";
             ExecuteQuery(txtSQLQuery);
             refreshForm(standartConnectionString, standartSelectCommand);
@@ -104,7 +104,8 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             dataGridView.Refresh();
             toolStripTextBoxNumber.Text = prevNumber = Validation.NumberStandart;
             toolStripTextBoxPrice.Text = prevPrice = Validation.PriceStandart;
-            toolStripTextBoxLimitDate.Text = prevLimitDate = Validation.DateStandart;
+            prevLimitDate = Validation.DateStandart;
+            dateTimePicker.Value = Validation.StD(Validation.DateStandart);
             toolStripComboBoxSupplier.SelectedIndex = -1;
             toolStripComboBoxProduct.SelectedIndex = -1;
         }
@@ -167,7 +168,7 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             string changePrice = toolStripTextBoxPrice.Text;
             selectCommand = "update Series set Price='" + changePrice + "' where ID = " + valueId;
             changeValue(standartConnectionString, selectCommand);
-            string changeLimitDate = toolStripTextBoxLimitDate.Text;
+            string changeLimitDate = Validation.DtS(dateTimePicker.Value);
             selectCommand = "update Series set LimitDate='" + changeLimitDate + "' where ID = " + valueId;
             changeValue(standartConnectionString, selectCommand);
             string changeSupplier = toolStripComboBoxSupplier.ComboBox.SelectedValue.ToString();
@@ -189,7 +190,7 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             string PriceId = dataGridView[2, CurrentRow].Value.ToString().Replace(',','.');
             toolStripTextBoxPrice.Text = PriceId;
             string LimitDateId = dataGridView[3, CurrentRow].Value.ToString();
-            toolStripTextBoxLimitDate.Text = LimitDateId;
+            dateTimePicker.Value = Validation.StD(LimitDateId);
             string SupplierId = dataGridView[4, CurrentRow].Value.ToString();
             toolStripComboBoxSupplier.Text = SupplierId;
             string ProductId = dataGridView[5, CurrentRow].Value.ToString();
@@ -217,18 +218,6 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             else
             {
                 prevPrice= toolStripTextBoxPrice.Text;
-            }
-        }
-
-        private void toolStripTextBoxLimitDate_TextChanged(object sender, EventArgs e)
-        {
-            if (!Validation.isDate(toolStripTextBoxLimitDate.Text))
-            {
-                toolStripTextBoxLimitDate.Text = prevLimitDate;
-            }
-            else
-            {
-                prevLimitDate = toolStripTextBoxLimitDate.Text;
             }
         }
     }

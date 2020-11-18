@@ -19,10 +19,11 @@ namespace EIS
         private DataTable DT = new DataTable();
         private static string sPath = Program.dbPath;
 
-        private string standartSelectCommand = "Select JO.ID, JO.Date, JO.Type, JO.Description, JO.Count, S.Number AS Series, E.Name AS Employee " +
+        private string standartSelectCommand = "Select JO.ID, JO.Date, JO.Type, JO.Description, JO.Count, S.Number AS Series, E.Name AS Employee, P.Name AS Product " +
                "from JournalOperation JO " +
                "Join Series S On JO.SeriesID = S.ID " +
-               "Join Employee E On JO.EmployeeID = E.ID";
+               "Join Employee E On JO.EmployeeID = E.ID " +
+               "Join Product P On S.ProductID = P.ID";
         private string standartConnectionString = @"Data Source=" + sPath + ";New=False;Version=3";
 
         public FormMain()
@@ -42,6 +43,7 @@ namespace EIS
             dataAdapter.Fill(ds);
             dataGridView.DataSource = ds;
             dataGridView.DataMember = ds.Tables[0].ToString();
+            dataGridView.Columns[0].Visible = false;
             connect.Close();
         }
 
@@ -77,17 +79,32 @@ namespace EIS
 
         private void поступлениеТоваровToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            var form = new FormAddOperation();
+            form.FormClosed += (object s, FormClosedEventArgs args) =>
+            {
+                selectTable(standartConnectionString, standartSelectCommand);
+            };
+            form.Show();
         }
 
         private void продажаТоваровToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            var form = new FormSellOperation();
+            form.FormClosed += (object s, FormClosedEventArgs args) =>
+            {
+                selectTable(standartConnectionString, standartSelectCommand);
+            };
+            form.Show();
         }
 
         private void списаниеТоваровToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            var form = new FormDebetingOperation();
+            form.FormClosed += (object s, FormClosedEventArgs args) =>
+            {
+                selectTable(standartConnectionString, standartSelectCommand);
+            };
+            form.Show();
         }
     }
 }

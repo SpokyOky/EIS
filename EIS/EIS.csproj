@@ -71,6 +71,12 @@
     <Compile Include="FormDebetingOperation.Designer.cs">
       <DependentUpon>FormDebetingOperation.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormJournalEntries.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormJournalEntries.Designer.cs">
+      <DependentUpon>FormJournalEntries.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormSellOperation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,6 +136,9 @@
     <Compile Include="Validation.cs" />
     <EmbeddedResource Include="FormDebetingOperation.resx">
       <DependentUpon>FormDebetingOperation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormJournalEntries.resx">
+      <DependentUpon>FormJournalEntries.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormSellOperation.resx">
       <DependentUpon>FormSellOperation.cs</DependentUpon>

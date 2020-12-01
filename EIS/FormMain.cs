@@ -96,7 +96,8 @@ namespace EIS
 
         private void журналПроводокToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+            var form = new FormJournalEntries();
+            form.Show();
         }
 
         private void поступлениеТоваровToolStripMenuItem_Click(object sender, EventArgs e)
@@ -135,9 +136,6 @@ namespace EIS
             if ("Поступление серии" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
             {
                 form = new FormAddOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
-            }else if("Списание просроченных товаров" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
-            {
-                form = new FormDebetingOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
             }else if ("Продажа товаров" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
             {
                 form = new FormSellOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));

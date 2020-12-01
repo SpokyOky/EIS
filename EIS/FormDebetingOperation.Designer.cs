@@ -77,7 +77,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(38, 13);
             this.label3.TabIndex = 11;
-            this.label3.Text = "Серия";
+            this.label3.Text = "Серии";
             // 
             // FormDebetingOperation
             // 

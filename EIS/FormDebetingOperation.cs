@@ -13,7 +13,7 @@ namespace EIS
 {
     public partial class FormDebetingOperation : Form
     {
-        private int? idJO;
+        private int idJO = -1;
         private SQLiteConnection sql_con;
         private SQLiteCommand sql_cmd;
         private DataSet DS = new DataSet();
@@ -29,28 +29,25 @@ namespace EIS
             InitializeComponent();
         }
 
-        public FormDebetingOperation(int idJO)
-        {
-            this.idJO = idJO;
-            InitializeComponent();
-        }
-
         private void FormDebetingOperation_Load(object sender, EventArgs e)
         {
-            dateTimePicker.Value = DateTime.Parse(prevDate);
-            string selectSeries = "select ID, Number from Series where LimitDate <= '" + Validation.DtS(dateTimePicker.Value) + "'";
-            selectCombo(standartConnectionString, selectSeries, comboBoxSeries, "Number", "ID");
-            if (idJO == null)
+            string selectMaxJO = "select max(id) from JournalOperation";
+            int maxJO = Convert.ToInt32(selectValue(standartConnectionString, selectMaxJO));
+            if (maxJO == 0)
             {
-
+                idJO = 0;
             }
             else
             {
-                string selectCommand = "SELECT SeriesID FROM JournalOperation WHERE ID = '" + idJO + "'";
-                int seriesId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
-                comboBoxSeries.SelectedIndex = -1;
-                comboBoxSeries.SelectedValue = seriesId;
+                idJO = maxJO + 1;
             }
+            dateTimePicker.Value = DateTime.Parse(prevDate);
+            string selectSeries = "select ID, Number from Series where LimitDate <= '" + Validation.DtS(dateTimePicker.Value) + "'";
+            selectCombo(standartConnectionString, selectSeries, comboBoxSeries, "Number", "ID");
+            string selectCommand = "SELECT SeriesID FROM JournalOperation WHERE ID = '" + idJO + "'";
+            int seriesId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
+            comboBoxSeries.SelectedIndex = -1;
+            comboBoxSeries.SelectedValue = seriesId;
         }
 
         public object selectValue(string ConnectionString, String selectCommand)
@@ -86,22 +83,37 @@ ComboBox comboBox, string displayMember, string valueMember)
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            if (comboBoxSeries.Text == "")
-            {
-                MessageBox.Show("Выберите серию");
-                return;
-            }
-
             string type = "Списание просроченных товаров";
             string desc = "Списание просроченных товаров";
 
-            if (idJO == null)
+            for (int i = 0; i < comboBoxSeries.Items.Count; i++)
             {
+                comboBoxSeries.SelectedIndex = 0;
+                int serID = Convert.ToInt32(comboBoxSeries.SelectedValue);
+                string selectProd = "select Name from Product where ID = " +
+                    "(select ProductID from Series where ID = '" + serID + "')";
+                string prod = Convert.ToString(selectValue(standartConnectionString, selectProd));
+                string selectCommand = "select Sum(Count) from JournalEntries where SubkontoDT1 = '"
+                + prod + "' and SubkontoDT2 = '" + comboBoxSeries.Text + "'";
+                object dtCount = selectValue(standartConnectionString, selectCommand);
+                selectCommand = "select Sum(Count) from JournalEntries where SubkontoKT1 = '"
+                    + prod + "' and SubkontoKT2 = '" + comboBoxSeries.Text + "'";
+                object ktCount = selectValue(standartConnectionString, selectCommand);
 
-            }
-            else
-            {
+                string selectZakupPrice = "select ZakupPrice from JournalEntries where ID = " + serID + "'";
+                double zakupPrice = Convert.ToDouble(selectValue(standartConnectionString, selectZakupPrice));
 
+                int remains = Convert.ToInt32(dtCount) - Convert.ToInt32(ktCount);
+                double sumProd = remains * zakupPrice;
+                
+                if (remains != 0)
+                {
+                    string SQLQuery = "insert into JournalEntries (Date, DT, SubkontoDT1, SubkontoDT2, KT, " +
+                    "SubkontoKT1, SubkontoKT2, Count, Sum, OperationID) values ('" +
+                    Validation.DtS(dateTimePicker.Value) + "', '44', '', '', '41', " + prod +
+                    "', '" + comboBoxSeries.Text + "', '" + remains + "', '" + sumProd + "', '" + idJO + "')";
+                    ExecuteQuery(SQLQuery);
+                }
             }
 
             MessageBox.Show("Сохранено");

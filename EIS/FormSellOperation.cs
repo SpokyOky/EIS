@@ -13,6 +13,7 @@ namespace EIS
 {
     public partial class FormSellOperation : Form
     {
+        private int? idJO;
         private SQLiteConnection sql_con;
         private SQLiteCommand sql_cmd;
         private DataSet DS = new DataSet();
@@ -29,18 +30,58 @@ namespace EIS
             InitializeComponent();
         }
 
+        public FormSellOperation(int idJO)
+        {
+            this.idJO = idJO;
+            InitializeComponent();
+        }
+
         private void FormSellOperation_Load(object sender, EventArgs e)
         {
             string selectProduct = "SELECT ID, Name FROM Product";
             selectCombo(standartConnectionString, selectProduct, comboBoxProduct, "Name", "ID");
-            comboBoxProduct.SelectedIndex = -1;
 
             string selectEmployee = "SELECT ID, Name FROM Employee";
             selectCombo(standartConnectionString, selectEmployee, comboBoxEmployee, "Name", "ID");
-            comboBoxEmployee.SelectedIndex = -1;
 
             textBoxCount.Text = prevCount;
             dateTimePicker.Value = DateTime.Parse(prevDate);
+
+            if (idJO == null)
+            {
+                comboBoxProduct.SelectedIndex = -1;
+                comboBoxEmployee.SelectedIndex = -1;
+            }
+            else
+            {
+                string selectCommand = "SELECT SeriesID FROM JournalOperation WHERE ID = '" + idJO + "'";
+                int seriesId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
+                selectCommand = "SELECT ProductID FROM Series WHERE ID = '" + seriesId + "'";
+                int productId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
+                selectCommand = "SELECT EmployeeID FROM JournalOperation WHERE ID = '" + idJO + "'";
+                int employeeId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
+                comboBoxProduct.SelectedIndex = -1;
+                comboBoxProduct.SelectedValue = productId;
+                comboBoxEmployee.SelectedValue = employeeId;
+                comboBoxSeries.SelectedValue = seriesId;
+                selectCommand = "SELECT Count FROM JournalOperation WHERE ID = '" + idJO + "'";
+                textBoxCount.Text = Convert.ToString(selectValue(standartConnectionString, selectCommand));
+            }
+        }
+
+        public object selectValue(string ConnectionString, String selectCommand)
+        {
+            SQLiteConnection connect = new SQLiteConnection(ConnectionString);
+            connect.Open();
+            SQLiteCommand command = new SQLiteCommand(selectCommand, connect);
+            SQLiteDataReader reader = command.ExecuteReader();
+            object value = "";
+            while (reader.Read())
+            {
+                value = reader[0];
+            }
+            connect.Close();
+            return value;
         }
 
         public void selectCombo(string ConnectionString, string selectCommand,
@@ -79,11 +120,29 @@ ComboBox comboBox, string displayMember, string valueMember)
 
             string type = "Продажа товаров";
             string desc = "Продажа товаров";
-            string txtSQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID, EmployeeID) values ('" +
+
+            if (idJO == null)
+            {
+                string SQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID, EmployeeID) values ('" +
        Validation.DtS(dateTimePicker.Value) + "', '" + type + "','" + desc + "','" + textBoxCount.Text + "','" +
        comboBoxSeries.SelectedValue + "','" + comboBoxEmployee.SelectedValue + "')";
-            ExecuteQuery(txtSQLQuery);
-
+                ExecuteQuery(SQLQuery);
+            }
+            else
+            {
+                string updateDate = "update JournalOperation set Date = '" + Validation.DtS(dateTimePicker.Value) + "' where ID = '" + idJO + "'";
+                changeValue(standartConnectionString, updateDate);
+                string updateType = "update JournalOperation set Type = '" + type + "' where ID = '" + idJO + "'";
+                changeValue(standartConnectionString, updateType);
+                string updateDesc = "update JournalOperation set Description = '" + desc + "' where ID = '" + idJO + "'";
+                changeValue(standartConnectionString, updateDesc);
+                string updateCount = "update JournalOperation set Count = '" + textBoxCount.Text + "' where ID = '" + idJO + "'";
+                changeValue(standartConnectionString, updateCount);
+                string updateSeries = "update JournalOperation set SeriesID = '" + comboBoxSeries.SelectedValue + "' where ID = '" + idJO + "'";
+                changeValue(standartConnectionString, updateSeries);
+                string updateEmployee = "update JournalOperation set EmployeeID = '" + comboBoxEmployee.SelectedValue + "' where ID = '" + idJO + "'";
+                changeValue(standartConnectionString, updateEmployee);
+            }
             MessageBox.Show("Сохранено");
             Close();
         }
@@ -120,7 +179,7 @@ ComboBox comboBox, string displayMember, string valueMember)
             {
                 return;
             }
-            string selectSeries = "SELECT ID, Number FROM Series WHERE ProductID='" + comboBoxProduct.SelectedIndex + "'";
+            string selectSeries = "SELECT ID, Number FROM Series WHERE ProductID='" + comboBoxProduct.SelectedValue + "'";
             selectCombo(standartConnectionString, selectSeries, comboBoxSeries, "Number", "ID");
             comboBoxSeries.SelectedIndex = -1;
         }

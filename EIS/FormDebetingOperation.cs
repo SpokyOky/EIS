@@ -13,6 +13,7 @@ namespace EIS
 {
     public partial class FormDebetingOperation : Form
     {
+        private int? idJO;
         private SQLiteConnection sql_con;
         private SQLiteCommand sql_cmd;
         private DataSet DS = new DataSet();
@@ -28,11 +29,43 @@ namespace EIS
             InitializeComponent();
         }
 
+        public FormDebetingOperation(int idJO)
+        {
+            this.idJO = idJO;
+            InitializeComponent();
+        }
+
         private void FormDebetingOperation_Load(object sender, EventArgs e)
         {
             dateTimePicker.Value = DateTime.Parse(prevDate);
             string selectSeries = "select ID, Number from Series where LimitDate <= '" + Validation.DtS(dateTimePicker.Value) + "'";
             selectCombo(standartConnectionString, selectSeries, comboBoxSeries, "Number", "ID");
+            if (idJO == null)
+            {
+
+            }
+            else
+            {
+                string selectCommand = "SELECT SeriesID FROM JournalOperation WHERE ID = '" + idJO + "'";
+                int seriesId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
+                comboBoxSeries.SelectedIndex = -1;
+                comboBoxSeries.SelectedValue = seriesId;
+            }
+        }
+
+        public object selectValue(string ConnectionString, String selectCommand)
+        {
+            SQLiteConnection connect = new SQLiteConnection(ConnectionString);
+            connect.Open();
+            SQLiteCommand command = new SQLiteCommand(selectCommand, connect);
+            SQLiteDataReader reader = command.ExecuteReader();
+            object value = "";
+            while (reader.Read())
+            {
+                value = reader[0];
+            }
+            connect.Close();
+            return value;
         }
 
         public void selectCombo(string ConnectionString, string selectCommand,
@@ -61,6 +94,15 @@ ComboBox comboBox, string displayMember, string valueMember)
 
             string type = "Списание просроченных товаров";
             string desc = "Списание просроченных товаров";
+
+            if (idJO == null)
+            {
+
+            }
+            else
+            {
+
+            }
 
             MessageBox.Show("Сохранено");
             Close();

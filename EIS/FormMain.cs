@@ -47,6 +47,28 @@ namespace EIS
             connect.Close();
         }
 
+        public void changeValue(string ConnectionString, string selectCommand)
+        {
+            SQLiteConnection connect = new
+           SQLiteConnection(ConnectionString);
+            connect.Open();
+            SQLiteTransaction trans;
+            SQLiteCommand cmd = new SQLiteCommand();
+            trans = connect.BeginTransaction();
+            cmd.Connection = connect;
+            cmd.CommandText = selectCommand;
+            cmd.ExecuteNonQuery();
+            trans.Commit();
+            connect.Close();
+        }
+
+        public void refreshForm(string ConnectionString, string selectCommand)
+        {
+            selectTable(ConnectionString, selectCommand);
+            dataGridView.Update();
+            dataGridView.Refresh();
+        }
+
         private void планСчетовToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new FormChartOfAccounts().Show();
@@ -105,6 +127,35 @@ namespace EIS
                 selectTable(standartConnectionString, standartSelectCommand);
             };
             form.Show();
+        }
+
+        private void редактированиеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form form = new Form();
+            if ("Поступление серии" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
+            {
+                form = new FormAddOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
+            }else if("Списание просроченных товаров" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
+            {
+                form = new FormDebetingOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
+            }else if ("Продажа товаров" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
+            {
+                form = new FormSellOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
+            }
+            form.FormClosed += (object s, FormClosedEventArgs args) =>
+            {
+                selectTable(standartConnectionString, standartSelectCommand);
+            };
+            form.Show();
+        }
+
+        private void удалитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
+            string valueId = dataGridView[0, CurrentRow].Value.ToString();
+            string selectCommand = "delete from JournalOperation where ID=" + valueId;
+            changeValue(standartConnectionString, selectCommand);
+            refreshForm(standartConnectionString, standartSelectCommand);
         }
     }
 }

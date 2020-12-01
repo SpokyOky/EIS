@@ -86,6 +86,7 @@ ComboBox comboBox, string displayMember, string valueMember)
             string type = "Списание просроченных товаров";
             string desc = "Списание просроченных товаров";
 
+            int sumRemains = 0;
             for (int i = 0; i < comboBoxSeries.Items.Count; i++)
             {
                 comboBoxSeries.SelectedIndex = 0;
@@ -101,7 +102,7 @@ ComboBox comboBox, string displayMember, string valueMember)
                 object ktCount = selectValue(standartConnectionString, selectCommand);
 
                 string selectZakupPrice = "select ZakupPrice from JournalEntries where ID = " + serID + "'";
-                double zakupPrice = Convert.ToDouble(selectValue(standartConnectionString, selectZakupPrice));
+                double zakupPrice = Convert.ToDouble(selectValue(standartConnectionString, selectZakupPrice).ToString().Replace('.', ','));
 
                 int remains = Convert.ToInt32(dtCount) - Convert.ToInt32(ktCount);
                 double sumProd = remains * zakupPrice;
@@ -113,8 +114,14 @@ ComboBox comboBox, string displayMember, string valueMember)
                     Validation.DtS(dateTimePicker.Value) + "', '44', '', '', '41', " + prod +
                     "', '" + comboBoxSeries.Text + "', '" + remains + "', '" + sumProd + "', '" + idJO + "')";
                     ExecuteQuery(SQLQuery);
+                    sumRemains += remains;
                 }
             }
+
+            string txtSQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID) values ('" +
+       Validation.DtS(dateTimePicker.Value) + "', '" + type + "','" + desc + "','" + sumRemains + "','" +
+       comboBoxSeries.SelectedValue + "')";
+            ExecuteQuery(txtSQLQuery);
 
             MessageBox.Show("Сохранено");
             Close();

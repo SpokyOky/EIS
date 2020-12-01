@@ -13,7 +13,7 @@ namespace EIS
 {
     public partial class FormJournalEntries : Form
     {
-        private int? idJO = 0;
+        private int idJO = -1;
         public int IdJO { set { idJO = value; } }
         private SQLiteConnection sql_con;
         private SQLiteCommand sql_cmd;
@@ -43,7 +43,7 @@ namespace EIS
                 selectCommand += " Where Date >= '" + Validation.DtS(dateTimePickerFrom.Value) +
                     "' and Date <= '" + Validation.DtS(dateTimePickerTo.Value) + "'";
             }
-            if (idJO != null)
+            if (idJO != -1)
             {
                 if (!selectCommand.Contains("Where"))
                 {
@@ -53,7 +53,7 @@ namespace EIS
                 {
                     selectCommand += " and ";
                 }
-                selectCommand += "IdJournalOfOperations = '" + idJO + "'";
+                selectCommand += "OperationID = '" + idJO + "'";
             }
             selectTable(standartConnectionString, selectCommand);
         }

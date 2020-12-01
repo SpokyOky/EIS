@@ -131,8 +131,7 @@ ComboBox comboBox, string displayMember, string valueMember)
             }
             string type = "Поступление серии";
             string desc = "Поступление очередной серии товаров";
-            double sumProv = Convert.ToDouble(textBoxCount.Text) + Convert.ToDouble(textBoxZakupPrice.Text);
-
+            double sumProv = Convert.ToInt32(textBoxCount.Text) + Convert.ToDouble(textBoxZakupPrice.Text.Replace('.', ','));
 
             if (idJO == -1)
             {
@@ -147,7 +146,7 @@ ComboBox comboBox, string displayMember, string valueMember)
                 SQLQuery = "insert into JournalEntries (Date, DT, SubkontoDT1, SubkontoDT2, KT, " +
                     "SubkontoKT1, SubkontoKT2, Count, Sum, OperationID) values ('" +
                     Validation.DtS(dateTimePicker.Value) + "', '41', '" + comboBoxProduct.Text +
-                    "', '" + comboBoxSeries.Text + "', '60', '" + comboBoxSupplier.Text + "', '" +
+                    "', '" + comboBoxSeries.Text + "', '60', '" + comboBoxSupplier.Text + "', '', '" +
                     textBoxCount.Text + "', '" + sumProv + "', '" + idJO + "')";
                 ExecuteQuery(SQLQuery);
             }

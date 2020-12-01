@@ -96,8 +96,7 @@ namespace EIS
 
         private void журналПроводокToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var form = new FormJournalEntries();
-            form.Show();
+            new FormJournalEntries().Show();
         }
 
         private void поступлениеТоваровToolStripMenuItem_Click(object sender, EventArgs e)
@@ -154,6 +153,13 @@ namespace EIS
             string selectCommand = "delete from JournalOperation where ID=" + valueId;
             changeValue(standartConnectionString, selectCommand);
             refreshForm(standartConnectionString, standartSelectCommand);
+        }
+
+        private void посмотретьПроводкиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var form = new FormJournalEntries();
+            form.IdJO = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
+            form.Show();
         }
     }
 }

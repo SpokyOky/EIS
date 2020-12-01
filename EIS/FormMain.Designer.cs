@@ -48,6 +48,7 @@
             this.изменениеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.редактированиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.посмотретьПроводкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -194,10 +195,11 @@
             // 
             this.изменениеToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.редактированиеToolStripMenuItem,
-            this.удалитьToolStripMenuItem});
+            this.удалитьToolStripMenuItem,
+            this.посмотретьПроводкиToolStripMenuItem});
             this.изменениеToolStripMenuItem.Name = "изменениеToolStripMenuItem";
-            this.изменениеToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
-            this.изменениеToolStripMenuItem.Text = "Изменение";
+            this.изменениеToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.изменениеToolStripMenuItem.Text = "Действия";
             // 
             // редактированиеToolStripMenuItem
             // 
@@ -212,6 +214,13 @@
             this.удалитьToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.удалитьToolStripMenuItem.Text = "Удалить";
             this.удалитьToolStripMenuItem.Click += new System.EventHandler(this.удалитьToolStripMenuItem_Click);
+            // 
+            // посмотретьПроводкиToolStripMenuItem
+            // 
+            this.посмотретьПроводкиToolStripMenuItem.Name = "посмотретьПроводкиToolStripMenuItem";
+            this.посмотретьПроводкиToolStripMenuItem.Size = new System.Drawing.Size(197, 22);
+            this.посмотретьПроводкиToolStripMenuItem.Text = "Посмотреть проводки";
+            this.посмотретьПроводкиToolStripMenuItem.Click += new System.EventHandler(this.посмотретьПроводкиToolStripMenuItem_Click);
             // 
             // FormMain
             // 
@@ -253,6 +262,7 @@
         private System.Windows.Forms.ToolStripMenuItem изменениеToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem редактированиеToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem удалитьToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem посмотретьПроводкиToolStripMenuItem;
     }
 }
 

@@ -33,6 +33,8 @@
             this.buttonSave = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.comboBoxEmployee = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // dateTimePicker
@@ -79,11 +81,30 @@
             this.label3.TabIndex = 11;
             this.label3.Text = "Серии";
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(218, 65);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(60, 13);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "Сотрудник";
+            // 
+            // comboBoxEmployee
+            // 
+            this.comboBoxEmployee.FormattingEnabled = true;
+            this.comboBoxEmployee.Location = new System.Drawing.Point(218, 81);
+            this.comboBoxEmployee.Name = "comboBoxEmployee";
+            this.comboBoxEmployee.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxEmployee.TabIndex = 12;
+            // 
             // FormDebetingOperation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(355, 118);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.comboBoxEmployee);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.buttonSave);
@@ -104,5 +125,7 @@
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox comboBoxEmployee;
     }
 }

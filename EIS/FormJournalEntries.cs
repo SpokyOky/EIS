@@ -38,7 +38,7 @@ namespace EIS
         {
             String selectCommand = "select ID, Date, DT, SubkontoDT1, SubkontoDT2, KT, " +
             "SubkontoKT1, SubkontoKT2, Count, Sum, OperationID from JournalEntries";
-            if (!checkBoxAll.Checked)
+            if (!checkBoxAll.Checked)//чтоб один день работал
             {
                 selectCommand += " Where Date >= '" + Validation.DtS(dateTimePickerFrom.Value) +
                     "' and Date <= '" + Validation.DtS(dateTimePickerTo.Value) + "'";

@@ -44,10 +44,8 @@ namespace EIS
             dateTimePicker.Value = DateTime.Parse(prevDate);
             string selectSeries = "select ID, Number from Series where LimitDate <= '" + Validation.DtS(dateTimePicker.Value) + "'";
             selectCombo(standartConnectionString, selectSeries, comboBoxSeries, "Number", "ID");
-            string selectCommand = "SELECT SeriesID FROM JournalOperation WHERE ID = '" + idJO + "'";
-            int seriesId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
-            comboBoxSeries.SelectedIndex = -1;
-            comboBoxSeries.SelectedValue = seriesId;
+            string selectEmployee = "select ID, Name from Employee";
+            selectCombo(standartConnectionString, selectEmployee, comboBoxEmployee, "Name", "ID");
         }
 
         public object selectValue(string ConnectionString, String selectCommand)
@@ -86,10 +84,11 @@ ComboBox comboBox, string displayMember, string valueMember)
             string type = "Списание просроченных товаров";
             string desc = "Списание просроченных товаров";
 
+            bool flag = false;
             int sumRemains = 0;
             for (int i = 0; i < comboBoxSeries.Items.Count; i++)
             {
-                comboBoxSeries.SelectedIndex = 0;
+                comboBoxSeries.SelectedIndex = i;
                 int serID = Convert.ToInt32(comboBoxSeries.SelectedValue);
                 string selectProd = "select Name from Product where ID = " +
                     "(select ProductID from Series where ID = '" + serID + "')";
@@ -101,9 +100,16 @@ ComboBox comboBox, string displayMember, string valueMember)
                     + prod + "' and SubkontoKT2 = '" + comboBoxSeries.Text + "'";
                 object ktCount = selectValue(standartConnectionString, selectCommand);
 
-                string selectZakupPrice = "select ZakupPrice from JournalEntries where ID = " + serID + "'";
+                string selectZakupPrice = "select Price from Series where ID = '" + serID + "'";
                 double zakupPrice = Convert.ToDouble(selectValue(standartConnectionString, selectZakupPrice).ToString().Replace('.', ','));
-
+                if (dtCount == DBNull.Value)
+                {
+                    dtCount = 0;
+                }
+                if (ktCount == DBNull.Value)
+                {
+                    ktCount = 0;
+                }
                 int remains = Convert.ToInt32(dtCount) - Convert.ToInt32(ktCount);
                 double sumProd = remains * zakupPrice;
                 
@@ -111,19 +117,29 @@ ComboBox comboBox, string displayMember, string valueMember)
                 {
                     string SQLQuery = "insert into JournalEntries (Date, DT, SubkontoDT1, SubkontoDT2, KT, " +
                     "SubkontoKT1, SubkontoKT2, Count, Sum, OperationID) values ('" +
-                    Validation.DtS(dateTimePicker.Value) + "', '44', '', '', '41', " + prod +
+                    Validation.DtS(dateTimePicker.Value) + "', '44', '', '', '41', '" + prod +
                     "', '" + comboBoxSeries.Text + "', '" + remains + "', '" + sumProd + "', '" + idJO + "')";
                     ExecuteQuery(SQLQuery);
                     sumRemains += remains;
+
+
+                    string txtSQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID, EmployeeID) values ('" +
+               Validation.DtS(dateTimePicker.Value) + "', '" + type + "','" + desc + "','" + sumProd + "','" +
+               comboBoxSeries.SelectedValue + "', '" + comboBoxEmployee.SelectedValue + "')";
+                    ExecuteQuery(txtSQLQuery);
+
+                    flag = true;
                 }
             }
 
-            string txtSQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID) values ('" +
-       Validation.DtS(dateTimePicker.Value) + "', '" + type + "','" + desc + "','" + sumRemains + "','" +
-       comboBoxSeries.SelectedValue + "')";
-            ExecuteQuery(txtSQLQuery);
-
-            MessageBox.Show("Сохранено");
+            if (flag)
+            {
+                MessageBox.Show("Сохранено");
+            }
+            else
+            {
+                MessageBox.Show("Не найдено остатков");
+            }
             Close();
         }
 

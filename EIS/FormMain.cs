@@ -96,7 +96,12 @@ namespace EIS
 
         private void журналПроводокToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new FormJournalEntries().Show();
+            var form = new FormJournalEntries();
+            form.FormClosed += (object s, FormClosedEventArgs args) =>
+            {
+                selectTable(standartConnectionString, standartSelectCommand);
+            };
+            form.Show();
         }
 
         private void поступлениеТоваровToolStripMenuItem_Click(object sender, EventArgs e)
@@ -131,19 +136,23 @@ namespace EIS
 
         private void редактированиеToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form form = new Form();
-            if ("Поступление серии" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
+            if (dataGridView.SelectedRows.Count > 0)
             {
-                form = new FormAddOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
-            }else if ("Продажа товаров" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
-            {
-                form = new FormSellOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
+                Form form = new Form();
+                if ("Поступление серии" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
+                {
+                    form = new FormAddOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
+                }
+                else if ("Продажа товаров" == Convert.ToString(dataGridView.SelectedRows[0].Cells[2].Value))
+                {
+                    form = new FormSellOperation(Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value));
+                }
+                form.FormClosed += (object s, FormClosedEventArgs args) =>
+                {
+                    selectTable(standartConnectionString, standartSelectCommand);
+                };
+                form.Show();
             }
-            form.FormClosed += (object s, FormClosedEventArgs args) =>
-            {
-                selectTable(standartConnectionString, standartSelectCommand);
-            };
-            form.Show();
         }
 
         private void удалитьToolStripMenuItem_Click(object sender, EventArgs e)

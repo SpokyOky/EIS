@@ -65,6 +65,7 @@ namespace EIS
                 int employeeId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
                 comboBoxProduct.SelectedIndex = -1;
                 comboBoxProduct.SelectedValue = productId;
+                comboBoxEmployee.SelectedIndex = -1;
                 comboBoxEmployee.SelectedValue = employeeId;
                 comboBoxSeries.SelectedValue = seriesId;
                 comboBoxSupplier.SelectedValue = supplierId;
@@ -164,6 +165,8 @@ ComboBox comboBox, string displayMember, string valueMember)
                 changeValue(standartConnectionString, updateSeries);
                 string updateEmployee = "update JournalOperation set EmployeeID = '" + comboBoxEmployee.SelectedValue + "' where ID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateEmployee);
+                string updateSupplier = "update Series set SupplierID = '" + comboBoxSupplier.SelectedValue + "' where ID = '" + comboBoxSeries.SelectedValue + "'";
+                changeValue(standartConnectionString, updateSupplier);
 
                 string updateDateJE = "update JournalEntries set Date = '" + Validation.DtS(dateTimePicker.Value) + "' where OperationID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateDateJE);

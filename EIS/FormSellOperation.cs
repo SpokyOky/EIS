@@ -127,6 +127,14 @@ ComboBox comboBox, string displayMember, string valueMember)
             selectCommand = "select Sum(Count) from JournalEntries where SubkontoKT1 = '"
                 + comboBoxProduct.Text + "' and SubkontoKT2 = '" + comboBoxSeries.Text + "'";
             object ktCount = selectValue(standartConnectionString, selectCommand);
+            if (dtCount == DBNull.Value)
+            {
+                dtCount = 0;
+            }
+            if (ktCount == DBNull.Value)
+            {
+                ktCount = 0;
+            }
 
             int remains = Convert.ToInt32(dtCount) - Convert.ToInt32(ktCount);
             if (remains < Convert.ToInt32(textBoxCount.Text))
@@ -134,7 +142,7 @@ ComboBox comboBox, string displayMember, string valueMember)
                 MessageBox.Show("НЕ ПРОДАМ, остаток меньше");
                 return;
             }
-            string selectLimitDate = "select LimitDate from Series where ID = '" + comboBoxSeries.Text + "'";
+            string selectLimitDate = "select LimitDate from Series where ID = '" + comboBoxSeries.SelectedValue + "'";
             DateTime LimitDate = Convert.ToDateTime(selectValue(standartConnectionString, selectLimitDate));
             if (dateTimePicker.Value > LimitDate)
             {
@@ -142,10 +150,10 @@ ComboBox comboBox, string displayMember, string valueMember)
                 return;
             }
 
-            string selectRoznPrice = "select RoznPrice from Series where ID = '" + comboBoxSeries.Text + "'";
+            string selectRoznPrice = "select RoznPrice from Series where ID = '" + comboBoxSeries.SelectedValue + "'";
             double roznPrice = Convert.ToDouble(selectValue(standartConnectionString, selectRoznPrice));
 
-            string selectZakupPrice = "select ZakupPrice from Series where ID = '" + comboBoxSeries.Text + "'";
+            string selectZakupPrice = "select Price from Series where ID = '" + comboBoxSeries.SelectedValue + "'";
             double zakupPrice = Convert.ToDouble(selectValue(standartConnectionString, selectZakupPrice));
 
             double sumProv1 = zakupPrice * Convert.ToInt32(textBoxCount.Text);

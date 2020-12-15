@@ -32,6 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.labelSum = new System.Windows.Forms.Label();
+            this.buttonPDF = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -71,11 +72,22 @@
             this.labelSum.Size = new System.Drawing.Size(0, 13);
             this.labelSum.TabIndex = 3;
             // 
+            // buttonPDF
+            // 
+            this.buttonPDF.Location = new System.Drawing.Point(199, 9);
+            this.buttonPDF.Name = "buttonPDF";
+            this.buttonPDF.Size = new System.Drawing.Size(75, 23);
+            this.buttonPDF.TabIndex = 4;
+            this.buttonPDF.Text = "PDF";
+            this.buttonPDF.UseVisualStyleBackColor = true;
+            this.buttonPDF.Click += new System.EventHandler(this.buttonPDF_Click);
+            // 
             // FormReport1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 466);
+            this.Controls.Add(this.buttonPDF);
             this.Controls.Add(this.labelSum);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.label1);
@@ -94,5 +106,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Label labelSum;
+        private System.Windows.Forms.Button buttonPDF;
     }
 }

@@ -43,7 +43,7 @@ namespace EIS
             "join JournalOperation JO on JE.OperationID = JO.ID " +
             "join Series S on JO.SeriesID = S.ID " +
             "join Product P on S.ProductID = P.ID " +
-            "where JE.Date > '" + dateFrom + "' and JE.Date < '" + dateTo + "' "+
+            "where JE.Date > '" + dateFrom + "' and JE.Date < '" + dateTo + "' " +
             "group by P.Name";
 
             labelSum.Text = "Итого: ";
@@ -102,12 +102,12 @@ namespace EIS
                 try
                 {
                     string FONT_LOCATION = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Fonts), "arial.TTF"); //определяем В СИСТЕМЕ(чтобы не копировать файл) расположение шрифта arial.ttf
-        BaseFont baseFont = BaseFont.CreateFont(FONT_LOCATION, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED); //создаем шрифт
-        iTextSharp.text.Font fontParagraph = new iTextSharp.text.Font(baseFont, 17, iTextSharp.text.Font.NORMAL); //регистрируем + можно задать параметры для него(17 - размер, последний параметр - стиль)
-        string title = "";
-                   
-                    title = "Ведомость заявок" + " на " + Validation.DtS(dateTimePicker.Value) + "\n\n";
-                   
+                    BaseFont baseFont = BaseFont.CreateFont(FONT_LOCATION, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED); //создаем шрифт
+                    iTextSharp.text.Font fontParagraph = new iTextSharp.text.Font(baseFont, 17, iTextSharp.text.Font.NORMAL); //регистрируем + можно задать параметры для него(17 - размер, последний параметр - стиль)
+                    string title = "";
+
+                    title = "Список товаров, проданных на " + Validation.DtS(dateTimePicker.Value) + "\n\n";
+
                     var phraseTitle = new Phrase(title,
                     new iTextSharp.text.Font(baseFont, 18, iTextSharp.text.Font.BOLD));
                     Paragraph paragraph = new
@@ -119,31 +119,31 @@ namespace EIS
 
                     PdfPTable table = new PdfPTable(dataGridView1.Columns.Count);
 
-                    for (int i = 0; i<dataGridView1.Columns.Count; i++)
+                    for (int i = 0; i < dataGridView1.Columns.Count; i++)
                     {
                         table.AddCell(new Phrase(dataGridView1.Columns[i].HeaderCell.Value.ToString(), fontParagraph));
                     }
-                    for (int i = 0; i<dataGridView1.Rows.Count; i++)
+                    for (int i = 0; i < dataGridView1.Rows.Count; i++)
                     {
-                        for (int j = 0; j<dataGridView1.Columns.Count; j++)
+                        for (int j = 0; j < dataGridView1.Columns.Count; j++)
                         {
                             table.AddCell(new Phrase(dataGridView1.Rows[i].Cells[j].Value.ToString(), fontParagraph));
                         }
                     }
                     PdfPTable table2 = new PdfPTable(dataGridView1.Columns.Count);
-List<string> words = new List<string>();
+                    List<string> words = new List<string>();
 
-words.Add("Итого:");
+                    words.Add("Итого:");
                     words.Add("");
                     words.AddRange(itogo.Split(' '));
-                    for (int j = 0; j<words.Count; j++)
+                    for (int j = 0; j < words.Count; j++)
                     {
                         table2.AddCell(new Phrase(words[j], fontParagraph));
                     }
                     using (FileStream stream = new FileStream(sfd.FileName, FileMode.Create))
                     {
                         iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A2, 10f, 10f, 10f, 0f);
-PdfWriter.GetInstance(pdfDoc, stream);
+                        PdfWriter.GetInstance(pdfDoc, stream);
                         pdfDoc.Open();
                         pdfDoc.Add(paragraph);
                         pdfDoc.Add(table);

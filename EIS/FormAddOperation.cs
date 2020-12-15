@@ -21,8 +21,10 @@ namespace EIS
         private static string sPath = Program.dbPath;
 
         private string prevCount = Validation.NumberStandart;
+        private string prevNumber = Validation.NumberStandart;
         private string prevZakupPrice = Validation.PriceStandart;
         private string prevDate = Validation.DateStandart;
+        private string prevLimitDate = Validation.DateStandart;
 
         private string standartConnectionString = @"Data Source=" + sPath + ";New=False;Version=3";
 
@@ -45,16 +47,24 @@ namespace EIS
             string selectEmployee = "SELECT ID, Name FROM Employee";
             selectCombo(standartConnectionString, selectEmployee, comboBoxEmployee, "Name", "ID");
 
+            string selectSupplier = "SELECT ID, Name FROM Supplier";
+            selectCombo(standartConnectionString, selectSupplier, comboBoxSupplier, "Name", "ID");
+
             textBoxCount.Text = prevCount;
             textBoxZakupPrice.Text = prevZakupPrice;
-            dateTimePicker.Value = DateTime.Parse(prevDate);
+            textBoxNumber.Text = prevNumber;
+            dateTimePickerDate.Value = DateTime.Parse(prevDate);
+            dateTimePickerLimitDate.Value = DateTime.Parse(prevLimitDate);
             if (idJO == -1)
             {
+                textBoxNumber.Enabled = true;
                 comboBoxProduct.SelectedIndex = -1;
                 comboBoxEmployee.SelectedIndex = -1;
+                comboBoxSupplier.SelectedIndex = -1;
             }
             else
             {
+                textBoxNumber.Enabled = false;
                 string selectCommand = "SELECT SeriesID FROM JournalOperation WHERE ID = '" + idJO + "'";
                 int seriesId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
                 selectCommand = "SELECT ProductID FROM Series WHERE ID = '" + seriesId + "'";
@@ -63,17 +73,29 @@ namespace EIS
                 int supplierId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
                 selectCommand = "SELECT EmployeeID FROM JournalOperation WHERE ID = '" + idJO + "'";
                 int employeeId = Convert.ToInt32(selectValue(standartConnectionString, selectCommand));
-                comboBoxProduct.SelectedIndex = -1;
+
+                string selectNumber = "select Number from Series where ID = '" + seriesId + "'";
+                textBoxNumber.Text = selectValue(standartConnectionString, selectNumber).ToString();
+
                 comboBoxProduct.SelectedValue = productId;
-                comboBoxEmployee.SelectedIndex = -1;
                 comboBoxEmployee.SelectedValue = employeeId;
-                comboBoxSeries.SelectedValue = seriesId;
                 comboBoxSupplier.SelectedValue = supplierId;
+
                 selectCommand = "SELECT Count FROM JournalOperation WHERE ID = '" + idJO + "'";
                 textBoxCount.Text = Convert.ToString(selectValue(standartConnectionString, selectCommand));
 
                 selectCommand = "SELECT Price FROM Series WHERE ID = '" + seriesId + "'";
-                textBoxZakupPrice.Text = Convert.ToDouble(selectValue(standartConnectionString, selectCommand)).ToString().Replace(',', '.');
+                string zakupPrice = Convert.ToDouble(selectValue(standartConnectionString, selectCommand)).ToString().Replace(',', '.');
+                if (!zakupPrice.Contains("."))
+                {
+                    zakupPrice += ".00";
+                }
+                textBoxZakupPrice.Text = zakupPrice;
+
+                selectCommand = "SELECT Date FROM JournalOperation WHERE ID = '" + idJO + "'";
+                dateTimePickerDate.Value = Convert.ToDateTime(selectValue(standartConnectionString, selectCommand));
+                selectCommand = "SELECT LimitDate FROM Series WHERE ID = '" + seriesId + "'";
+                dateTimePickerLimitDate.Value = Convert.ToDateTime(selectValue(standartConnectionString, selectCommand));
             }
         }
 
@@ -115,11 +137,6 @@ ComboBox comboBox, string displayMember, string valueMember)
                 MessageBox.Show("Выберите продукт");
                 return;
             }
-            if (comboBoxSeries.Text == "")
-            {
-                MessageBox.Show("Выберите серию");
-                return;
-            }
             if (comboBoxSupplier.Text == "")
             {
                 MessageBox.Show("Выберите поставщика");
@@ -130,15 +147,29 @@ ComboBox comboBox, string displayMember, string valueMember)
                 MessageBox.Show("Выберите сотрудника");
                 return;
             }
+            if (textBoxNumber.Text == "")
+            {
+                MessageBox.Show("Выберите сотрудника");
+                return;
+            }
             string type = "Поступление серии";
             string desc = "Поступление очередной серии товаров";
             double sumProv = Convert.ToInt32(textBoxCount.Text) + Convert.ToDouble(textBoxZakupPrice.Text.Replace('.', ','));
 
             if (idJO == -1)
             {
-                string SQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID, EmployeeID) values ('" +
-       Validation.DtS(dateTimePicker.Value) + "', '" + type + "','" + desc + "','" + textBoxCount.Text + "','" +
-       comboBoxSeries.SelectedValue + "','" + comboBoxEmployee.SelectedValue + "')";
+                string SQLQuery = "insert into Series (Number, Price, RoznPrice, LimitDate, Count, SupplierID, ProductID) values ('" +
+       textBoxNumber.Text + "', '" + textBoxRoznPrice.Text + "', '" + textBoxRoznPrice.Text + "', '" + 
+       Validation.DtS(dateTimePickerLimitDate.Value) + "', '" + textBoxCount.Text  + "','" +
+       comboBoxSupplier.SelectedValue + "','" + comboBoxProduct.SelectedValue + "')";
+                ExecuteQuery(SQLQuery);
+
+                string selectSeriesId = "select ID from Series where Number = '" + textBoxNumber.Text + "'";
+                int seriesId = Convert.ToInt32(selectValue(standartConnectionString, selectSeriesId));
+
+                SQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID, EmployeeID) values ('" +
+       Validation.DtS(dateTimePickerDate.Value) + "', '" + type + "','" + desc + "','" + 
+       textBoxCount.Text + "','" + seriesId + "','" + comboBoxEmployee.SelectedValue + "')";
                 ExecuteQuery(SQLQuery);
 
                 string selectID = "select max(id) from JournalOperation";
@@ -146,14 +177,17 @@ ComboBox comboBox, string displayMember, string valueMember)
 
                 SQLQuery = "insert into JournalEntries (Date, DT, SubkontoDT1, SubkontoDT2, KT, " +
                     "SubkontoKT1, SubkontoKT2, Count, Sum, OperationID) values ('" +
-                    Validation.DtS(dateTimePicker.Value) + "', '41', '" + comboBoxProduct.Text +
-                    "', '" + comboBoxSeries.Text + "', '60', '" + comboBoxSupplier.Text + "', '', '" +
+                    Validation.DtS(dateTimePickerDate.Value) + "', '41', '" + comboBoxProduct.Text +
+                    "', '" + textBoxNumber.Text + "', '60', '" + comboBoxSupplier.Text + "', '', '" +
                     textBoxCount.Text + "', '" + sumProv + "', '" + idJO + "')";
                 ExecuteQuery(SQLQuery);
             }
             else
             {
-                string updateDate = "update JournalOperation set Date = '" + Validation.DtS(dateTimePicker.Value) + "' where ID = '" + idJO + "'";
+                string selectSeriesId = "select ID from Series where Number = '" + textBoxNumber.Text + "'";
+                int seriesId = Convert.ToInt32(selectValue(standartConnectionString, selectSeriesId));
+
+                string updateDate = "update JournalOperation set Date = '" + Validation.DtS(dateTimePickerDate.Value) + "' where ID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateDate);
                 string updateType = "update JournalOperation set Type = '" + type + "' where ID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateType);
@@ -161,18 +195,20 @@ ComboBox comboBox, string displayMember, string valueMember)
                 changeValue(standartConnectionString, updateDesc);
                 string updateCount = "update JournalOperation set Count = '" + textBoxCount.Text + "' where ID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateCount);
-                string updateSeries = "update JournalOperation set SeriesID = '" + comboBoxSeries.SelectedValue + "' where ID = '" + idJO + "'";
+                string updateSeries = "update JournalOperation set SeriesID = '" + seriesId + "' where ID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateSeries);
                 string updateEmployee = "update JournalOperation set EmployeeID = '" + comboBoxEmployee.SelectedValue + "' where ID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateEmployee);
-                string updateSupplier = "update Series set SupplierID = '" + comboBoxSupplier.SelectedValue + "' where ID = '" + comboBoxSeries.SelectedValue + "'";
+                string updateSupplier = "update Series set SupplierID = '" + comboBoxSupplier.SelectedValue + "' where ID = '" + seriesId + "'";
                 changeValue(standartConnectionString, updateSupplier);
+                string updateLimitDate = "update Series set LimitDate = '" + Validation.DtS(dateTimePickerLimitDate.Value) + "' where ID = '" + seriesId + "'";
+                changeValue(standartConnectionString, updateLimitDate);
 
-                string updateDateJE = "update JournalEntries set Date = '" + Validation.DtS(dateTimePicker.Value) + "' where OperationID = '" + idJO + "'";
+                string updateDateJE = "update JournalEntries set Date = '" + Validation.DtS(dateTimePickerDate.Value) + "' where OperationID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateDateJE);
                 string updateSubkontoDT1 = "update JournalEntries set SubkontoDT1 = '" + comboBoxProduct.Text + "' where OperationID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateSubkontoDT1);
-                string updateSubkontoDT2 = "update JournalEntries set SubkontoDT2 = '" + comboBoxSeries.Text + "' where OperationID = '" + idJO + "'";
+                string updateSubkontoDT2 = "update JournalEntries set SubkontoDT2 = '" + textBoxNumber.Text + "' where OperationID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateSubkontoDT2);
                 string updateSubkontoKT1 = "update JournalEntries set SubkontoKT1 = '" + comboBoxSupplier.Text + "' where OperationID = '" + idJO + "'";
                 changeValue(standartConnectionString, updateSubkontoKT1);
@@ -183,11 +219,11 @@ ComboBox comboBox, string displayMember, string valueMember)
 
             }
             string changeZakupPrice = textBoxZakupPrice.Text;
-            string txtSQLQuery = "update Series set Price='" + changeZakupPrice + "' where ID = '" + comboBoxSeries.SelectedValue + "'";
+            string txtSQLQuery = "update Series set Price='" + changeZakupPrice + "' where Number = '" + textBoxNumber.Text + "'";
             ExecuteQuery(txtSQLQuery);
 
             string changeRoznPrice = textBoxRoznPrice.Text;
-            txtSQLQuery = "update Series set RoznPrice='" + changeRoznPrice + "' where ID = '" + comboBoxSeries.SelectedValue + "'";
+            txtSQLQuery = "update Series set RoznPrice='" + changeRoznPrice + "' where Number = '" + textBoxNumber.Text + "'";
             ExecuteQuery(txtSQLQuery);
             MessageBox.Show("Сохранено");
             Close();
@@ -219,28 +255,6 @@ ComboBox comboBox, string displayMember, string valueMember)
             connect.Close();
         }
 
-        private void comboBoxProduct_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBoxProduct.SelectedIndex < 0)
-            {
-                return;
-            }
-            string selectSeries = "SELECT ID, Number FROM Series WHERE ProductID='" + comboBoxProduct.SelectedValue + "'";
-            selectCombo(standartConnectionString, selectSeries, comboBoxSeries, "Number", "ID");
-            comboBoxSeries.SelectedIndex = -1;
-        }
-
-        private void comboBoxSeries_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (comboBoxSeries.SelectedIndex < 0)
-            {
-                return;
-            }
-            string selectSupplier = "SELECT ID, Name FROM Supplier";
-            selectCombo(standartConnectionString, selectSupplier, comboBoxSupplier, "Name", "ID");
-            comboBoxSupplier.SelectedIndex = -1;
-        }
-
         private void textBoxCount_TextChanged(object sender, EventArgs e)
         {
             if (!Validation.isNumber(textBoxCount.Text))
@@ -266,9 +280,16 @@ ComboBox comboBox, string displayMember, string valueMember)
             }
         }
 
-        private void comboBoxProduct_TextChanged(object sender, EventArgs e)
+        private void textBoxNumber_TextChanged(object sender, EventArgs e)
         {
-            comboBoxProduct_SelectedIndexChanged(sender, e);
+            if (!Validation.isNumber(textBoxNumber.Text))
+            {
+                textBoxNumber.Text = prevCount;
+            }
+            else
+            {
+                prevCount = textBoxNumber.Text;
+            }
         }
     }
 }

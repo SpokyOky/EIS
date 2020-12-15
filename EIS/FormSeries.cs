@@ -21,10 +21,8 @@ namespace EIS
         private static string sPath = Program.dbPath;
 
         private string prevNumber = Validation.NumberStandart;
-        private string prevPrice = Validation.PriceStandart;
-        private string prevLimitDate = Validation.DateStandart;
 
-        private string standartSelectCommand = "Select Ser.ID, Ser.Number, Ser.Price, Ser.LimitDate, Sup.Name AS Supplier, P.Name AS Product " +
+        private string standartSelectCommand = "Select Ser.ID, Ser.Number, Ser.Price, Ser.RoznPrice, Ser.LimitDate, Sup.Name AS Supplier, P.Name AS Product " +
                 "from Series Ser " +
                 "Join Supplier Sup On Ser.SupplierID = Sup.ID " +
                 "Join Product P On Ser.ProductID = P.ID";
@@ -38,16 +36,6 @@ namespace EIS
         private void FormSeries_Load(object sender, EventArgs e)
         {
             selectTable(standartConnectionString, standartSelectCommand);
-            string selectSupplier = "SELECT ID, Name FROM Supplier";
-            selectCombo(standartConnectionString, selectSupplier, toolStripComboBoxSupplier, "Name", "ID");
-            toolStripComboBoxSupplier.SelectedIndex = -1;
-            string selectProduct = "SELECT ID, Name FROM Product";
-            selectCombo(standartConnectionString, selectProduct, toolStripComboBoxProduct, "Name", "ID");
-            toolStripComboBoxProduct.SelectedIndex = -1;
-
-            toolStripTextBoxNumber.Text = prevNumber;
-            toolStripTextBoxPrice.Text = prevPrice;
-            dateTimePicker.Value = DateTime.Parse(prevLimitDate);
         }
 
         public void selectCombo(string ConnectionString, string selectCommand,
@@ -66,26 +54,6 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             connect.Close();
         }
 
-        private void bindingNavigatorAddNewItem_Click(object sender, EventArgs e)
-        {
-            if (toolStripComboBoxSupplier.Text == "")
-            {
-                MessageBox.Show("Выберите поставщика");
-                return;
-            }
-            if (toolStripComboBoxProduct.Text == "")
-            {
-                MessageBox.Show("Выберите товар");
-                return;
-            }
-
-            string txtSQLQuery = "insert into Series (Number, Price, LimitDate, SupplierID, ProductID) values ('" +
-       toolStripTextBoxNumber.Text + "', '" + toolStripTextBoxPrice.Text + "','" + Validation.DtS(dateTimePicker.Value) + "','" + 
-       toolStripComboBoxSupplier.ComboBox.SelectedValue + "','" + toolStripComboBoxProduct.ComboBox.SelectedValue + "')";
-            ExecuteQuery(txtSQLQuery);
-            refreshForm(standartConnectionString, standartSelectCommand);
-        }
-
         private void ExecuteQuery(string txtQuery)
         {
             sql_con = new SQLiteConnection("Data Source=" + sPath +
@@ -102,12 +70,6 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             selectTable(ConnectionString, selectCommand);
             dataGridView.Update();
             dataGridView.Refresh();
-            toolStripTextBoxNumber.Text = prevNumber = Validation.NumberStandart;
-            toolStripTextBoxPrice.Text = prevPrice = Validation.PriceStandart;
-            prevLimitDate = Validation.DateStandart;
-            dateTimePicker.Value = Validation.StD(Validation.DateStandart);
-            toolStripComboBoxSupplier.SelectedIndex = -1;
-            toolStripComboBoxProduct.SelectedIndex = -1;
         }
 
         public void selectTable(string ConnectionString, string selectCommand)
@@ -128,8 +90,15 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
         {
             int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
             string valueId = dataGridView[0, CurrentRow].Value.ToString();
-            string selectCommand = "delete from Series where ID=" + valueId;
+
+            string selectCommand = "delete from JournalEntries where OperationID = " +
+                "(select ID from JournalOperation where SeriesID = " + valueId + "')";
             changeValue(standartConnectionString, selectCommand);
+            selectCommand = "delete from JournalOperations where SeriesID = '" + valueId + "'";
+            changeValue(standartConnectionString, selectCommand);
+            selectCommand = "delete from Series where ID=" + valueId;
+            changeValue(standartConnectionString, selectCommand);
+
             refreshForm(standartConnectionString, standartSelectCommand);
         }
 
@@ -146,79 +115,6 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             cmd.ExecuteNonQuery();
             trans.Commit();
             connect.Close();
-        }
-
-        private void toolStripButtonEdit_Click(object sender, EventArgs e)
-        {
-            if (toolStripComboBoxSupplier.Text == "")
-            {
-                MessageBox.Show("Выберите подразделение");
-                return;
-            }
-            if (toolStripComboBoxProduct.Text == "")
-            {
-                MessageBox.Show("Выберите товар");
-                return;
-            }
-            int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
-            string valueId = dataGridView[0, CurrentRow].Value.ToString();
-            string changeNumber = toolStripTextBoxNumber.Text;
-            string selectCommand = "update Series set Number='" + changeNumber + "' where ID = " + valueId;
-            changeValue(standartConnectionString, selectCommand);
-            string changePrice = toolStripTextBoxPrice.Text;
-            selectCommand = "update Series set Price='" + changePrice + "' where ID = " + valueId;
-            changeValue(standartConnectionString, selectCommand);
-            string changeLimitDate = Validation.DtS(dateTimePicker.Value);
-            selectCommand = "update Series set LimitDate='" + changeLimitDate + "' where ID = " + valueId;
-            changeValue(standartConnectionString, selectCommand);
-            string changeSupplier = toolStripComboBoxSupplier.ComboBox.SelectedValue.ToString();
-            selectCommand = "update Series set SupplierID='" + changeSupplier + "' where ID = " + valueId;
-            changeValue(standartConnectionString, selectCommand);
-            string changeProduct = toolStripComboBoxProduct.ComboBox.SelectedValue.ToString();
-            selectCommand = "update Series set ProductID='" + changeProduct + "' where ID = " + valueId;
-            changeValue(standartConnectionString, selectCommand);
-
-            refreshForm(standartConnectionString, standartSelectCommand);
-        }
-
-        private void dataGridView_CellMouseClick(object sender,
-    DataGridViewCellMouseEventArgs e)
-        {
-            int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
-            string NumberId = dataGridView[1, CurrentRow].Value.ToString();
-            toolStripTextBoxNumber.Text = NumberId;
-            string PriceId = dataGridView[2, CurrentRow].Value.ToString().Replace(',','.');
-            toolStripTextBoxPrice.Text = PriceId;
-            string LimitDateId = dataGridView[3, CurrentRow].Value.ToString();
-            dateTimePicker.Value = Validation.StD(LimitDateId);
-            string SupplierId = dataGridView[4, CurrentRow].Value.ToString();
-            toolStripComboBoxSupplier.Text = SupplierId;
-            string ProductId = dataGridView[5, CurrentRow].Value.ToString();
-            toolStripComboBoxProduct.Text = ProductId;
-        }
-
-        private void toolStripTextBoxNumber_TextChanged(object sender, EventArgs e)
-        {
-            if (!Validation.isNumber(toolStripTextBoxNumber.Text))
-            {
-                toolStripTextBoxNumber.Text = prevNumber;
-            }
-            else
-            {
-                prevNumber = toolStripTextBoxNumber.Text;
-            }
-        }
-
-        private void toolStripTextBoxPrice_TextChanged(object sender, EventArgs e)
-        {
-            if (!Validation.isPrice(toolStripTextBoxPrice.Text))
-            {
-                toolStripTextBoxPrice.Text = prevPrice;
-            }
-            else
-            {
-                prevPrice= toolStripTextBoxPrice.Text;
-            }
         }
     }
 }

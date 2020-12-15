@@ -19,11 +19,12 @@ namespace EIS
         private DataTable DT = new DataTable();
         private static string sPath = Program.dbPath;
 
-        private string standartSelectCommand = "Select JO.ID, JO.Date, JO.Type, JO.Description, JO.Count, S.Number AS Series, E.Name AS Employee, P.Name AS Product " +
-               "from JournalOperation JO " +
-               "Join Series S On JO.SeriesID = S.ID " +
-               "Join Employee E On JO.EmployeeID = E.ID " +
-               "Join Product P On S.ProductID = P.ID";
+        private string standartSelectCommand = "Select JO.ID, JO.Date, JO.Type, JO.Description, JO.Count, " +
+            "(Select S.Number from Series S where S.ID = JO.SeriesID) AS Series, " +
+            "E.Name AS Employee, " +
+            "(Select P.Name from Product P where P.ID = (Select S.ProductID from Series S where S.ID = JO.SeriesID)) AS Product " +
+            "from JournalOperation JO " +
+            "Join Employee E On JO.EmployeeID = E.ID";
         private string standartConnectionString = @"Data Source=" + sPath + ";New=False;Version=3";
 
         public FormMain()
@@ -43,7 +44,6 @@ namespace EIS
             dataAdapter.Fill(ds);
             dataGridView.DataSource = ds;
             dataGridView.DataMember = ds.Tables[0].ToString();
-            dataGridView.Columns[0].Visible = false;
             connect.Close();
         }
 
@@ -160,6 +160,8 @@ namespace EIS
             int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
             string valueId = dataGridView[0, CurrentRow].Value.ToString();
             string selectCommand = "delete from JournalOperation where ID=" + valueId;
+            changeValue(standartConnectionString, selectCommand);
+            selectCommand = "delete from JournalEntries where OperationID=" + valueId;
             changeValue(standartConnectionString, selectCommand);
             refreshForm(standartConnectionString, standartSelectCommand);
         }

@@ -121,11 +121,21 @@ ComboBox comboBox, string displayMember, string valueMember)
             string type = "Продажа товаров";
             string desc = "Продажа товаров";
 
-            string selectCommand = "select Sum(Count) from JournalEntries where SubkontoDT1 = '"
-                + comboBoxProduct.Text + "' and SubkontoDT2 = '" + comboBoxSeries.Text + "'";
+            string selectCommand = "select LimitDate from Series where Number = '" + comboBoxSeries.Text + "'";
+            object limitDate = selectValue(standartConnectionString, selectCommand);
+            if (dateTimePicker.Value > Convert.ToDateTime(limitDate))
+            {
+                MessageBox.Show("Просроченный товар, нельзя продать");
+                return;
+            }
+
+            selectCommand = "select Sum(Count) from JournalEntries where SubkontoDT1 = '"
+                + comboBoxProduct.Text + "' and SubkontoDT2 = '" + comboBoxSeries.Text + "' " +
+                "and Date <= '" + Validation.DtS(dateTimePicker.Value) + "'";
             object dtCount = selectValue(standartConnectionString, selectCommand);
             selectCommand = "select Sum(Count) from JournalEntries where SubkontoKT1 = '"
-                + comboBoxProduct.Text + "' and SubkontoKT2 = '" + comboBoxSeries.Text + "'";
+                + comboBoxProduct.Text + "' and SubkontoKT2 = '" + comboBoxSeries.Text + "' " +
+                "and Date <= '" + Validation.DtS(dateTimePicker.Value) + "'";
             object ktCount = selectValue(standartConnectionString, selectCommand);
             if (dtCount == DBNull.Value)
             {

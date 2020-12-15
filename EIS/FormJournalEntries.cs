@@ -40,8 +40,8 @@ namespace EIS
             "SubkontoKT1, SubkontoKT2, Count, Sum, OperationID from JournalEntries";
             if (!checkBoxAll.Checked)//чтоб один день работал
             {
-                selectCommand += " Where Date >= '" + Validation.DtS(dateTimePickerFrom.Value) +
-                    "' and Date <= '" + Validation.DtS(dateTimePickerTo.Value) + "'";
+                selectCommand += " Where Date > '" + Validation.DtS(dateTimePickerFrom.Value.AddDays(-1)) +
+                    "' and Date < '" + Validation.DtS(dateTimePickerTo.Value.AddDays(1)) + "'";
             }
             if (idJO != -1)
             {

@@ -49,7 +49,7 @@ namespace EIS
             toolStripTextBoxType.Text = prevType;
             dateTimePicker.Value = Validation.StD(prevDate);
             toolStripTextBoxDescription.Text = prevDesc;
-            toolStripTextBoxCount.Text = prevCount;            
+            toolStripTextBoxCount.Text = prevCount;
         }
 
         public void selectCombo(string ConnectionString, string selectCommand,

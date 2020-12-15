@@ -81,7 +81,17 @@ namespace EIS
         {
             int CurrentRow = dataGridView.SelectedCells[0].RowIndex;
             string valueId = dataGridView[0, CurrentRow].Value.ToString();
-            string selectCommand = "delete from Product where ID=" + valueId;
+
+            string selectCommand = "delete from JournalEntries where OperationID = " +
+                "(select ID from JournalOperation where SeriesID = " +
+                "(select ID from Series where ProductID = '" + valueId + "'))";
+            changeValue(standartConnectionString, selectCommand);
+            selectCommand = "delete from JournalOperations where SeriesID = " +
+                "(select ID from Series where ProductID = '" + valueId + "')";
+            changeValue(standartConnectionString, selectCommand);
+            selectCommand = "delete from Series where ProductID = '" + valueId + "'";
+            changeValue(standartConnectionString, selectCommand);
+            selectCommand = "delete from Product where ID=" + valueId;
             changeValue(standartConnectionString, selectCommand);
 
             refreshForm(standartConnectionString, standartSelectCommand);

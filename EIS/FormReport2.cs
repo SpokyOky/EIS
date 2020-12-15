@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace EIS
 {
-    public partial class FormReport1 : Form
+    public partial class FormReport2 : Form
     {
         string itogo = "";
         private SQLiteConnection sql_con;
@@ -25,26 +25,25 @@ namespace EIS
 
         private string standartConnectionString = @"Data Source=" + sPath + ";New=False;Version=3";
 
-        public FormReport1()
+        public FormReport2()
         {
             InitializeComponent();
         }
 
         private void updateTable()
         {
-            string dateFrom = Validation.DtS(dateTimePicker.Value.Date);
-            string dateTo = Validation.DtS(dateTimePicker.Value.AddDays(1).Date);
+            string dateFrom = Validation.DtS(dateTimePickerFrom.Value.Date);
+            string dateTo = Validation.DtS(dateTimePickerTo.Value.AddDays(1).Date);
 
-            string standartSelectCommand = "select P.Name, " +
-            "(select SUM(JE.Count) from JournalEntries JE where SubkontoKT1 = P.Name and DT = '90' and KT = '41') AS SellCount, " +
-            "(select SUM(JE.Sum) from JournalEntries JE where SubkontoKT1 = P.Name and DT = '90' and KT = '41') AS BuyPrice," +
-            "(select SUM(JE.Sum) from JournalEntries JE where SubkontoKT1 = P.Name and DT = '90' and KT = '41') *1.5 AS SellPrice " +
-            "from JournalEntries JE " +
-            "join JournalOperation JO on JE.OperationID = JO.ID " +
-            "join Series S on JO.SeriesID = S.ID " +
-            "join Product P on S.ProductID = P.ID " +
-            "where JE.Date > '" + dateFrom + "' and JE.Date < '" + dateTo + "' " +
-            "group by P.Name";
+            string standartSelectCommand = "select P.ID, P.Name, S.Number, S.LimitDate, JO.Date, " +
+                "(select SUM(JE.Count) from JournalEntries JE where SubkontoKT2 = S.Number and DT = '44' and KT = '41') AS Count, " +
+                "(select SUM(JE.Sum) from JournalEntries JE where SubkontoKT2 = S.Number and DT = '44' and KT = '41') AS Sum " +
+                "from JournalEntries JE " +
+                "join JournalOperation JO on JE.OperationID = JO.ID " +
+                "join Series S on JO.SeriesID = S.ID " +
+                "join Product P on S.ProductID = P.ID " +
+                "where JE.Date > '" + dateFrom + "' and JE.Date < '" + dateTo + "' " +
+                "group by S.Number";
 
             labelSum.Text = "Итого: ";
             itogo = "";
@@ -56,7 +55,7 @@ namespace EIS
             //}
             selectTable(standartConnectionString, standartSelectCommand);
 
-            for (int i = 1; i < dataGridView1.Columns.Count; i++)
+            for (int i = 5; i < dataGridView1.Columns.Count; i++)
             {
                 double sum = 0;
                 for (int j = 0; j < dataGridView1.Rows.Count; j++)
@@ -106,7 +105,7 @@ namespace EIS
                     iTextSharp.text.Font fontParagraph = new iTextSharp.text.Font(baseFont, 17, iTextSharp.text.Font.NORMAL); //регистрируем + можно задать параметры для него(17 - размер, последний параметр - стиль)
                     string title = "";
 
-                    title = "Список товаров, проданных на " + Validation.DtS(dateTimePicker.Value) + "\n\n";
+                    title = "Список списанных товаров, с " + Validation.DtS(dateTimePickerFrom.Value) + " по " + Validation.DtS(dateTimePickerTo.Value) + "\n\n";
 
                     var phraseTitle = new Phrase(title,
                     new iTextSharp.text.Font(baseFont, 18, iTextSharp.text.Font.BOLD));
@@ -134,6 +133,10 @@ namespace EIS
                     List<string> words = new List<string>();
 
                     words.Add("Итого:");
+                    words.Add("");
+                    words.Add("");
+                    words.Add("");
+                    words.Add("");
                     words.AddRange(itogo.Split(' '));
                     for (int j = 0; j < words.Count; j++)
                     {
@@ -162,6 +165,11 @@ namespace EIS
         }
 
         private void dateTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            updateTable();
+        }
+
+        private void dateTimePickerTo_ValueChanged(object sender, EventArgs e)
         {
             updateTable();
         }

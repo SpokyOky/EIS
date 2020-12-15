@@ -177,5 +177,10 @@ namespace EIS
         {
             new FormReport1().Show();
         }
+
+        private void списанныеТоварыToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new FormReport2().Show();
+        }
     }
 }

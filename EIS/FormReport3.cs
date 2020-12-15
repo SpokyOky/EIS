@@ -35,14 +35,23 @@ namespace EIS
             string dateFrom = Validation.DtS(dateTimePickerFrom.Value.Date);
             string dateTo = Validation.DtS(dateTimePickerTo.Value.AddDays(1).Date);
 
-            string standartSelectCommand = "select P.ID, P.Name, S.Number, S.LimitDate, JO.Date, " +
-                "(select SUM(JE.Count) from JournalEntries JE where SubkontoKT2 = S.Number and DT = '44' and KT = '41') AS Count, " +
-                "(select SUM(JE.Sum) from JournalEntries JE where SubkontoKT2 = S.Number and DT = '44' and KT = '41') AS Sum " +
+            string standartSelectCommand = "select P.ID, P.Name, S.Number, " +
+                "((select COALESCE(SUM(JE.Count), 0) from JournalEntries JE where SubkontoDT2 = S.Number and DT = '41' and KT = '60' and Date < '" + dateFrom + "') - " +
+                "(select COALESCE(SUM(JE.Count), 0) from JournalEntries JE where SubkontoKT2 = S.Number and KT = '41' and Date < '" + dateFrom + "')) AS CountStartOst, " +
+                "((select COALESCE(SUM(JE.Sum), 0) from JournalEntries JE where SubkontoDT2 = S.Number and DT = '41' and KT = '60' and Date < '" + dateFrom + "') - " +
+                "(select COALESCE(SUM(JE.Sum), 0) from JournalEntries JE where SubkontoKT2 = S.Number and KT = '41' and Date < '" + dateFrom + "')) AS SumStartOst, " +
+                "(select COALESCE(SUM(JE.Count), 0) from JournalEntries JE where SubkontoDT2 = S.Number and DT = '41' and KT = '60' and Date >= '" + dateFrom + "' and Date <= '" + dateTo + "') AS CountIncome, " +
+                "(select COALESCE(SUM(JE.Sum), 0) from JournalEntries JE where SubkontoDT2 = S.Number and DT = '41' and KT = '60' and Date >= '" + dateFrom + "' and Date <= '" + dateTo + "') AS SumIncome, " +
+                "(select COALESCE(SUM(JE.Count), 0) from JournalEntries JE where SubkontoKT2 = S.Number and KT = '41' and Date >= '" + dateFrom + "' and Date <= '" + dateTo + "') AS CountConsumption, " +
+                "(select COALESCE(SUM(JE.Sum), 0) from JournalEntries JE where SubkontoKT2 = S.Number and KT = '41' and Date >= '" + dateFrom + "' and Date <= '" + dateTo + "') AS SumConsumption, " +
+                "((select COALESCE(SUM(JE.Count), 0) from JournalEntries JE where SubkontoDT2 = S.Number and DT = '41' and KT = '60' and Date < '" + dateTo + "') - " +
+                "(select COALESCE(SUM(JE.Count), 0) from JournalEntries JE where SubkontoKT2 = S.Number and KT = '41' and Date < '" + dateTo + "')) AS CountEndOst, " +
+                "((select COALESCE(SUM(JE.Sum), 0) from JournalEntries JE where SubkontoDT2 = S.Number and DT = '41' and KT = '60' and Date < '" + dateTo + "') - " +
+                "(select COALESCE(SUM(JE.Sum), 0) from JournalEntries JE where SubkontoKT2 = S.Number and KT = '41' and Date < '" + dateTo + "')) AS SumEndOst " +
                 "from JournalEntries JE " +
                 "join JournalOperation JO on JE.OperationID = JO.ID " +
                 "join Series S on JO.SeriesID = S.ID " +
                 "join Product P on S.ProductID = P.ID " +
-                "where JE.Date > '" + dateFrom + "' and JE.Date < '" + dateTo + "' " +
                 "group by S.Number";
 
             labelSum.Text = "Итого: ";
@@ -55,25 +64,22 @@ namespace EIS
             //}
             selectTable(standartConnectionString, standartSelectCommand);
 
-            for (int i = 5; i < dataGridView1.Columns.Count; i++)
+            for (int i = 3; i < dataGridView1.Columns.Count; i++)
             {
                 double sum = 0;
                 for (int j = 0; j < dataGridView1.Rows.Count; j++)
                 {
                     if (dataGridView1.Rows[j].Cells[i].Value != DBNull.Value)
                     {
-                        if (dataGridView1.Rows[j].Cells[i].Value != null)
-                        {
-                            if (dataGridView1.Rows[j].Cells[i].Value != "")
-                            {
-                                sum += Convert.ToDouble(dataGridView1.Rows[j].Cells[i].Value);
-                            }
-                        }
+                        sum += Convert.ToDouble(dataGridView1.Rows[j].Cells[i].Value);
+                    }
+                    else
+                    {
+                        dataGridView1.Rows[j].Cells[i].Value = 0;
                     }
                 }
                 itogo += sum + " ";
             }
-
             labelSum.Text += itogo;
         }
 
@@ -133,8 +139,6 @@ namespace EIS
                     List<string> words = new List<string>();
 
                     words.Add("Итого:");
-                    words.Add("");
-                    words.Add("");
                     words.Add("");
                     words.Add("");
                     words.AddRange(itogo.Split(' '));

@@ -182,5 +182,10 @@ namespace EIS
         {
             new FormReport2().Show();
         }
+
+        private void оборотносальдоваяВедомостьToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new FormReport3().Show();
+        }
     }
 }

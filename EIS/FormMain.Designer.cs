@@ -256,6 +256,7 @@
             this.оборотносальдоваяВедомостьToolStripMenuItem1.Name = "оборотносальдоваяВедомостьToolStripMenuItem1";
             this.оборотносальдоваяВедомостьToolStripMenuItem1.Size = new System.Drawing.Size(252, 22);
             this.оборотносальдоваяВедомостьToolStripMenuItem1.Text = "Оборотно-сальдовая ведомость";
+            this.оборотносальдоваяВедомостьToolStripMenuItem1.Click += new System.EventHandler(this.оборотносальдоваяВедомостьToolStripMenuItem1_Click);
             // 
             // FormMain
             // 

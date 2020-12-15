@@ -172,5 +172,10 @@ namespace EIS
             form.IdJO = Convert.ToInt32(dataGridView.SelectedRows[0].Cells[0].Value);
             form.Show();
         }
+
+        private void поданныеЗаСменуТоварыToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new FormReport1().Show();
+        }
     }
 }

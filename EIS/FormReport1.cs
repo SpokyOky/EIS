@@ -23,7 +23,6 @@ namespace EIS
         private DataTable DT = new DataTable();
         private static string sPath = Program.dbPath;
 
-        private string standartSelectCommand = "Select * from Employee";
         private string standartConnectionString = @"Data Source=" + sPath + ";New=False;Version=3";
 
         public FormReport1()
@@ -33,8 +32,20 @@ namespace EIS
 
         private void updateTable()
         {
-            string dateFrom = Validation.DtS(dateTimePicker.Value.AddDays(-1));
-            string dateTo = Validation.DtS(dateTimePicker.Value.AddDays(1));
+            string dateFrom = Validation.DtS(dateTimePicker.Value.Date);
+            string dateTo = Validation.DtS(dateTimePicker.Value.AddDays(1).Date);
+
+            string standartSelectCommand = "select P.Name, " +
+            "(select SUM(JE.Count) from JournalEntries JE where SubkontoKT1 = P.Name and KT = '41') AS SellCount, " +
+            "(select SUM(JE.Sum) from JournalEntries JE where SubkontoKT1 = P.Name and KT = '41') AS BuyPrice, " +
+            "(select SUM(JE.Sum) from JournalEntries JE where SubkontoKT1 = P.Name and KT = '41') * 1.5 AS SellPrice " +
+            "from JournalEntries JE " +
+            "join JournalOperation JO on JE.OperationID = JO.ID " +
+            "join Series S on JO.SeriesID = S.ID " +
+            "join Product P on S.ProductID = P.ID " +
+            "where JE.Date > '" + dateFrom + "' and JE.Date < '" + dateTo + "' "+
+            "group by P.Name";
+
             labelSum.Text = "Итого: ";
             itogo = "";
 
@@ -43,29 +54,27 @@ namespace EIS
             //    MessageBox.Show("Дата начала периода должна быть меньше дата конца периода");
             //    return;
             //}
+            selectTable(standartConnectionString, standartSelectCommand);
 
-            string selectCommand = "select R.RequestDate, R.IdRequest, (select SUM(RM.Count * M.CostMaterial) " +
-                "from RequestMaterial RM join Material M on M.IdMaterial = RM.IdMaterial where RM.IdRequest = R.IdRequest) AS RequestedPrice, " +
-                "(select SUM(TP.Price) from TablePartOperation TP where TP.IdRequest = R.IdRequest) AS BuyedPrice " +
-                "from Request R where R.RequestDate >= '" + dateFrom + "' and R.RequestDate <= '" + dateTo + "'";
-            selectTable(standartConnectionString, selectCommand);
-
-            double sum = 0;
-            for (int i = 0; i < dataGridView1.Rows.Count; i++)
+            for (int i = 1; i < dataGridView1.Columns.Count; i++)
             {
-                sum += Convert.ToDouble(dataGridView1.Rows[i].Cells[2].Value);
-            }
-            itogo += sum + " ";
-
-            sum = 0;
-            for (int i = 0; i < dataGridView1.Rows.Count; i++)
-            {
-                if (dataGridView1.Rows[i].Cells[3].Value != DBNull.Value)
+                double sum = 0;
+                for (int j = 0; j < dataGridView1.Rows.Count; j++)
                 {
-                    sum += Convert.ToDouble(dataGridView1.Rows[i].Cells[3].Value);
+                    if (dataGridView1.Rows[j].Cells[i].Value != DBNull.Value)
+                    {
+                        if (dataGridView1.Rows[j].Cells[i].Value != null)
+                        {
+                            if (dataGridView1.Rows[j].Cells[i].Value != "")
+                            {
+                                sum += Convert.ToDouble(dataGridView1.Rows[j].Cells[i].Value);
+                            }
+                        }
+                    }
                 }
+                itogo += sum + " ";
             }
-            itogo += sum;
+
             labelSum.Text += itogo;
         }
 
@@ -151,6 +160,11 @@ PdfWriter.GetInstance(pdfDoc, stream);
                    MessageBoxIcon.Error);
                 }
             }
+        }
+
+        private void dateTimePicker_ValueChanged(object sender, EventArgs e)
+        {
+            updateTable();
         }
     }
 }

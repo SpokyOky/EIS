@@ -83,6 +83,12 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             dataAdapter.Fill(ds);
             dataGridView.DataSource = ds;
             dataGridView.DataMember = ds.Tables[0].ToString();
+            dataGridView.Columns[1].HeaderCell.Value = "Номер серии";
+            dataGridView.Columns[2].HeaderCell.Value = "Цена закупки";
+            dataGridView.Columns[3].HeaderCell.Value = "Цена продажи";
+            dataGridView.Columns[4].HeaderCell.Value = "Предельная дата реализации";
+            dataGridView.Columns[5].HeaderCell.Value = "Поставщик";
+            dataGridView.Columns[6].HeaderCell.Value = "Продукт";
             connect.Close();
         }
 
@@ -94,7 +100,7 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             string selectCommand = "delete from JournalEntries where OperationID = " +
                 "(select ID from JournalOperation where SeriesID = " + valueId + "')";
             changeValue(standartConnectionString, selectCommand);
-            selectCommand = "delete from JournalOperations where SeriesID = '" + valueId + "'";
+            selectCommand = "delete from JournalOperation where SeriesID = '" + valueId + "'";
             changeValue(standartConnectionString, selectCommand);
             selectCommand = "delete from Series where ID=" + valueId;
             changeValue(standartConnectionString, selectCommand);

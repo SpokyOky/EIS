@@ -20,8 +20,6 @@ namespace EIS
         private DataSet DS = new DataSet();
         private DataTable DT = new DataTable();
         private static string sPath = Program.dbPath;
-        private string standartSelectCommand = "select ID, Date, DT, SubkontoDT1, SubkontoDT2, KT, " +
-            "SubkontoKT1, SubkontoKT2, Count, Sum, OperationID from JournalEntries";
         private string standartConnectionString = @"Data Source=" + sPath + ";New=False;Version=3";
 
         public FormJournalEntries()
@@ -69,6 +67,16 @@ namespace EIS
             dataAdapter.Fill(ds);
             dataGridView.DataSource = ds;
             dataGridView.DataMember = ds.Tables[0].ToString();
+            dataGridView.Columns[1].HeaderCell.Value = "Дата";
+            dataGridView.Columns[2].HeaderCell.Value = "ДТ";
+            dataGridView.Columns[3].HeaderCell.Value = "СубконтоДТ1";
+            dataGridView.Columns[4].HeaderCell.Value = "СубконтоДТ2";
+            dataGridView.Columns[5].HeaderCell.Value = "КТ";
+            dataGridView.Columns[6].HeaderCell.Value = "СубконтоКТ1";
+            dataGridView.Columns[7].HeaderCell.Value = "СубконтоКТ2";
+            dataGridView.Columns[8].HeaderCell.Value = "Количество";
+            dataGridView.Columns[9].HeaderCell.Value = "Сумма";
+            dataGridView.Columns[10].HeaderCell.Value = "ИДоперации";
             connect.Close();
         }
 

@@ -74,6 +74,7 @@ namespace EIS
             dataAdapter.Fill(ds);
             dataGridView.DataSource = ds;
             dataGridView.DataMember = ds.Tables[0].ToString();
+            dataGridView.Columns[1].HeaderCell.Value = "Имя";
             connect.Close();
         }
 
@@ -86,12 +87,12 @@ namespace EIS
                 "(select ID from JournalOperation where SeriesID = " +
                 "(select ID from Series where ProductID = '" + valueId + "'))";
             changeValue(standartConnectionString, selectCommand);
-            selectCommand = "delete from JournalOperations where SeriesID = " +
+            selectCommand = "delete from JournalOperation where SeriesID = " +
                 "(select ID from Series where ProductID = '" + valueId + "')";
             changeValue(standartConnectionString, selectCommand);
             selectCommand = "delete from Series where ProductID = '" + valueId + "'";
             changeValue(standartConnectionString, selectCommand);
-            selectCommand = "delete from Product where ID=" + valueId;
+            selectCommand = "delete from Product where ID = '" + valueId + "'";
             changeValue(standartConnectionString, selectCommand);
 
             refreshForm(standartConnectionString, standartSelectCommand);

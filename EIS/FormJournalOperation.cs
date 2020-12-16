@@ -65,6 +65,12 @@ ToolStripComboBox comboBox, string displayMember, string valueMember)
             comboBox.ComboBox.DataSource = ds.Tables[0];
             comboBox.ComboBox.DisplayMember = displayMember;
             comboBox.ComboBox.ValueMember = valueMember;
+            dataGridView.Columns[1].HeaderCell.Value = "Дата операции";
+            dataGridView.Columns[2].HeaderCell.Value = "Тип операции";
+            dataGridView.Columns[3].HeaderCell.Value = "Описание";
+            dataGridView.Columns[4].HeaderCell.Value = "Количество";
+            dataGridView.Columns[5].HeaderCell.Value = "Серия";
+            dataGridView.Columns[6].HeaderCell.Value = "Сотрудник";
             connect.Close();
         }
 

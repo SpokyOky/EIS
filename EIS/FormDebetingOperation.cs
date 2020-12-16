@@ -86,6 +86,7 @@ ComboBox comboBox, string displayMember, string valueMember)
 
             bool flag = false;
             int sumRemains = 0;
+            double sum = 0;
             for (int i = 0; i < comboBoxSeries.Items.Count; i++)
             {
                 comboBoxSeries.SelectedIndex = i;
@@ -121,19 +122,17 @@ ComboBox comboBox, string displayMember, string valueMember)
                     "', '" + comboBoxSeries.Text + "', '" + remains + "', '" + sumProd + "', '" + idJO + "')";
                     ExecuteQuery(SQLQuery);
                     sumRemains += remains;
-
-
-                    string txtSQLQuery = "insert into JournalOperation (Date, Type, Description, Count, SeriesID, EmployeeID) values ('" +
-               Validation.DtS(dateTimePicker.Value) + "', '" + type + "','" + desc + "','" + sumProd + "','" +
-               comboBoxSeries.SelectedValue + "', '" + comboBoxEmployee.SelectedValue + "')";
-                    ExecuteQuery(txtSQLQuery);
-
+                    sum += sumProd;
                     flag = true;
                 }
             }
 
             if (flag)
             {
+                string txtSQLQuery = "insert into JournalOperation (Date, Type, Description, Count, EmployeeID) values ('" +
+               Validation.DtS(dateTimePicker.Value) + "', '" + type + "','" + desc + "','" + sum
+               + "', '" + comboBoxEmployee.SelectedValue + "')";
+                ExecuteQuery(txtSQLQuery);
                 MessageBox.Show("Сохранено");
             }
             else

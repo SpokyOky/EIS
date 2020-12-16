@@ -36,10 +36,6 @@
             this.серииToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.планСчетовToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.журналПроводокToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.отчётToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.проданныеТоварыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.списанныеТоварыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.оборотносальдоваяВедомостьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.журналОперацийToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.поступлениеТоваровToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.продажаТоваровToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,11 +44,11 @@
             this.редактированиеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.удалитьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.посмотретьПроводкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dataGridView = new System.Windows.Forms.DataGridView();
             this.отчётыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.поданныеЗаСменуТоварыToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.списанныеТоварыToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.оборотносальдоваяВедомостьToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.dataGridView = new System.Windows.Forms.DataGridView();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
@@ -62,7 +58,6 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.справочникиToolStripMenuItem,
             this.журналПроводокToolStripMenuItem,
-            this.отчётToolStripMenuItem,
             this.журналОперацийToolStripMenuItem,
             this.изменениеToolStripMenuItem,
             this.отчётыToolStripMenuItem});
@@ -126,34 +121,6 @@
             this.журналПроводокToolStripMenuItem.Text = "Журнал проводок";
             this.журналПроводокToolStripMenuItem.Click += new System.EventHandler(this.журналПроводокToolStripMenuItem_Click);
             // 
-            // отчётToolStripMenuItem
-            // 
-            this.отчётToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.проданныеТоварыToolStripMenuItem,
-            this.списанныеТоварыToolStripMenuItem,
-            this.оборотносальдоваяВедомостьToolStripMenuItem});
-            this.отчётToolStripMenuItem.Name = "отчётToolStripMenuItem";
-            this.отчётToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
-            this.отчётToolStripMenuItem.Text = "Отчёт";
-            // 
-            // проданныеТоварыToolStripMenuItem
-            // 
-            this.проданныеТоварыToolStripMenuItem.Name = "проданныеТоварыToolStripMenuItem";
-            this.проданныеТоварыToolStripMenuItem.Size = new System.Drawing.Size(252, 22);
-            this.проданныеТоварыToolStripMenuItem.Text = "Проданные товары";
-            // 
-            // списанныеТоварыToolStripMenuItem
-            // 
-            this.списанныеТоварыToolStripMenuItem.Name = "списанныеТоварыToolStripMenuItem";
-            this.списанныеТоварыToolStripMenuItem.Size = new System.Drawing.Size(252, 22);
-            this.списанныеТоварыToolStripMenuItem.Text = "Списанные товары";
-            // 
-            // оборотносальдоваяВедомостьToolStripMenuItem
-            // 
-            this.оборотносальдоваяВедомостьToolStripMenuItem.Name = "оборотносальдоваяВедомостьToolStripMenuItem";
-            this.оборотносальдоваяВедомостьToolStripMenuItem.Size = new System.Drawing.Size(252, 22);
-            this.оборотносальдоваяВедомостьToolStripMenuItem.Text = "Оборотно-сальдовая ведомость";
-            // 
             // журналОперацийToolStripMenuItem
             // 
             this.журналОперацийToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -216,17 +183,6 @@
             this.посмотретьПроводкиToolStripMenuItem.Text = "Посмотреть проводки";
             this.посмотретьПроводкиToolStripMenuItem.Click += new System.EventHandler(this.посмотретьПроводкиToolStripMenuItem_Click);
             // 
-            // dataGridView
-            // 
-            this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.AllowUserToDeleteRows = false;
-            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView.Location = new System.Drawing.Point(13, 28);
-            this.dataGridView.Name = "dataGridView";
-            this.dataGridView.ReadOnly = true;
-            this.dataGridView.Size = new System.Drawing.Size(902, 410);
-            this.dataGridView.TabIndex = 1;
-            // 
             // отчётыToolStripMenuItem
             // 
             this.отчётыToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -258,6 +214,17 @@
             this.оборотносальдоваяВедомостьToolStripMenuItem1.Text = "Оборотно-сальдовая ведомость";
             this.оборотносальдоваяВедомостьToolStripMenuItem1.Click += new System.EventHandler(this.оборотносальдоваяВедомостьToolStripMenuItem1_Click);
             // 
+            // dataGridView
+            // 
+            this.dataGridView.AllowUserToAddRows = false;
+            this.dataGridView.AllowUserToDeleteRows = false;
+            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView.Location = new System.Drawing.Point(13, 28);
+            this.dataGridView.Name = "dataGridView";
+            this.dataGridView.ReadOnly = true;
+            this.dataGridView.Size = new System.Drawing.Size(902, 410);
+            this.dataGridView.TabIndex = 1;
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -280,15 +247,11 @@
 
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem справочникиToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem отчётToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem товарToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem поставщикиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem сотрудникиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem серииToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem планСчетовToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem проданныеТоварыToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem списанныеТоварыToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem оборотносальдоваяВедомостьToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem журналПроводокToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem журналОперацийToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem поступлениеТоваровToolStripMenuItem;

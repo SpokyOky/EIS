@@ -54,11 +54,6 @@ namespace EIS
             labelSum.Text = "Итого: ";
             itogo = "";
 
-            //if (dateTimePickerFrom.Value.Date > dateTimePickerTo.Value.Date)
-            //{
-            //    MessageBox.Show("Дата начала периода должна быть меньше дата конца периода");
-            //    return;
-            //}
             selectTable(standartConnectionString, standartSelectCommand);
 
             for (int i = 1; i < dataGridView1.Columns.Count; i++)
@@ -94,8 +89,18 @@ namespace EIS
             dataAdapter.Fill(ds);
             dataGridView1.DataSource = ds;
             dataGridView1.DataMember = ds.Tables[0].ToString();
+            try
+            {
+                dataGridView1.Columns[1].HeaderCell.Value = "Товар";
+                dataGridView1.Columns[2].HeaderCell.Value = "Количество продаж";
+                dataGridView1.Columns[3].HeaderCell.Value = "Себестоимость";
+                dataGridView1.Columns[4].HeaderCell.Value = "Стоимость продажи";
+                dataGridView1.Columns[5].HeaderCell.Value = "Прибыль";
+            }
+            catch (Exception) { }
             connect.Close();
         }
+
         private void buttonPDF_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog

@@ -77,6 +77,8 @@ namespace EIS
             dataAdapter.Fill(ds);
             dataGridView.DataSource = ds;
             dataGridView.DataMember = ds.Tables[0].ToString();
+            dataGridView.Columns[1].HeaderCell.Value = "Имя";
+            dataGridView.Columns[2].HeaderCell.Value = "Телефон";
             connect.Close();
         }
 

@@ -47,7 +47,16 @@ namespace EIS
             dataAdapter.Fill(ds);
 
             dataGridView.DataSource = ds;
-            dataGridView.DataMember = ds.Tables[0].ToString();
+            dataGridView.DataMember = ds.Tables[0].ToString(); 
+            try
+            {
+                dataGridView.Columns[1].HeaderCell.Value = "Счёт";
+                dataGridView.Columns[2].HeaderCell.Value = "Описание";
+                dataGridView.Columns[3].HeaderCell.Value = "Тип";
+                dataGridView.Columns[4].HeaderCell.Value = "Субконто1";
+                dataGridView.Columns[5].HeaderCell.Value = "Субконто2";
+            }
+            catch (Exception) { }
             connect.Close();
         }
     }

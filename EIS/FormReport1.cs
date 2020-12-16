@@ -3,12 +3,16 @@ using iTextSharp.text.pdf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -28,6 +32,7 @@ namespace EIS
         public FormReport1()
         {
             InitializeComponent();
+            textBoxEmail.Text = Validation.EmailStandart;
         }
 
         private void updateTable()
@@ -150,6 +155,24 @@ namespace EIS
                         pdfDoc.Close();
                         stream.Close();
                     }
+
+                    string FileName = sfd.FileName;
+                    string mailAddress = textBoxEmail.Text;
+                    if (!string.IsNullOrEmpty(mailAddress))
+                    {
+                        if (Regex.IsMatch(mailAddress, @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-
+!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9az][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,17}))$"))
+                        {
+                            MessageBox.Show("Неверный формат для электронной почты", "Ошибка",
+                           MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        else
+                        {
+                            SendEmailForClients(mailAddress, "Отчеты:", "", FileName);
+                        }
+                    }
+
                     MessageBox.Show("Выполнено", "Успех", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
                 }
@@ -158,6 +181,41 @@ namespace EIS
                     MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK,
                    MessageBoxIcon.Error);
                 }
+            }
+        }
+
+        private void SendEmailForClients(string mailAddress, string subject, string text, string attachmentPath)
+        {
+
+            System.Net.Mail.MailMessage m = new System.Net.Mail.MailMessage();
+            SmtpClient smtpClient = null;
+            try
+            {
+                m.From = new MailAddress(ConfigurationManager.AppSettings["MailLogin"]);
+                m.To.Add(new MailAddress(mailAddress));
+                m.Subject = subject;
+                m.Body = text;
+                m.SubjectEncoding = System.Text.Encoding.UTF8;
+                m.BodyEncoding = System.Text.Encoding.UTF8;
+                m.Attachments.Add(new Attachment(attachmentPath));
+                smtpClient = new SmtpClient("smtp.gmail.com", 587);
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.EnableSsl = true;
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.Credentials = new NetworkCredential(
+                    ConfigurationManager.AppSettings["MailLogin"],
+                    ConfigurationManager.AppSettings["MailPassword"]
+                    );
+                smtpClient.Send(m);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                m = null;
+                smtpClient = null;
             }
         }
 

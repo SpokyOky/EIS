@@ -16,7 +16,7 @@ namespace EIS
         public static string FioStandart = "A B C";
         public static string NameStandart = "Abc";
         public static string PhoneStandart = "89998887766";
-        public static string EmailStandart = "gaben@newell.com";
+        public static string EmailStandart = "a4ottruba@gmail.com";
         public static string NumberStandart = "000";
         public static string PriceStandart = "00.00";
         public static string DateStandart = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");

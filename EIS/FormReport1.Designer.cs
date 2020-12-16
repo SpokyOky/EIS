@@ -33,6 +33,8 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.labelSum = new System.Windows.Forms.Label();
             this.buttonPDF = new System.Windows.Forms.Button();
+            this.textBoxEmail = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -82,11 +84,29 @@
             this.buttonPDF.UseVisualStyleBackColor = true;
             this.buttonPDF.Click += new System.EventHandler(this.buttonPDF_Click);
             // 
+            // textBoxEmail
+            // 
+            this.textBoxEmail.Location = new System.Drawing.Point(688, 9);
+            this.textBoxEmail.Name = "textBoxEmail";
+            this.textBoxEmail.Size = new System.Drawing.Size(100, 20);
+            this.textBoxEmail.TabIndex = 5;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(647, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(37, 13);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Почта";
+            // 
             // FormReport1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 466);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.textBoxEmail);
             this.Controls.Add(this.buttonPDF);
             this.Controls.Add(this.labelSum);
             this.Controls.Add(this.dataGridView1);
@@ -107,5 +127,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Label labelSum;
         private System.Windows.Forms.Button buttonPDF;
+        private System.Windows.Forms.TextBox textBoxEmail;
+        private System.Windows.Forms.Label label2;
     }
 }
